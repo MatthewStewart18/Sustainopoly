@@ -1,4 +1,3 @@
-package testBoard;
 
 public class test {
 	
