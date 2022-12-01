@@ -105,7 +105,6 @@ public class Board extends JFrame {
 		addSpacer(6,3,1,6,30,0);
 		
 		
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
         setLocationRelativeTo(null);
