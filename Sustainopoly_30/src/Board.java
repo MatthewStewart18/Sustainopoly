@@ -46,8 +46,8 @@ public class Board extends JFrame {
 		c.fill = GridBagConstraints.BOTH; 
 		c.ipady = 5;
 		c.ipadx = 0;
-		c.weightx = 1;
-		c.weighty = 1;
+		c.weightx = 0;
+		c.weighty = 0;
 		c.gridwidth = 1;
 		c.gridheight = 1;
 		c.gridx = 1;
@@ -101,8 +101,8 @@ public class Board extends JFrame {
 		addSpacer(0,0,7,1,0,30);
 		addSpacer(0,8,7,1,0,30);
 		addSpacer(0,10,7,1,0,30);
-		addSpacer(0,3,1,5,30,0);
-		addSpacer(6,3,1,5,30,0);
+		addSpacer(0,3,1,6,30,0);
+		addSpacer(6,3,1,6,30,0);
 		
 		
 		
