@@ -8,7 +8,7 @@ public class Display extends JFrame {
 	
 	private Color background, foregroundColour, textColour, borderColour;
 	private Container pane;
-	Board2 GB, GB2;
+	Board3 GB, GB2;
 	CardLayout layout;
 	
 	public Display()
@@ -23,7 +23,7 @@ public class Display extends JFrame {
 		layout = new CardLayout();
 		pane.setLayout(layout);
 		
-		GB = new Board2(sq, this);
+		GB = new Board3(sq, this);
 		AccessibilityPanel AP = new AccessibilityPanel(this);
 		
 		
