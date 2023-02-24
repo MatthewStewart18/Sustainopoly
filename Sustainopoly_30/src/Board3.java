@@ -462,7 +462,7 @@ public class Board3 extends JLayeredPane {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
+			squareButtons[3].setIcon(dicePics[3]);
 			Object ob = e.getSource();
 			
 			
