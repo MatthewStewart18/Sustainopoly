@@ -36,6 +36,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private int zoom = 3;
 	private int defaultSize = 1000;
 	
+	private int currentRotation = 0;
+	
 	private JLabel player, money, time;
 
 	JLabel boardImage;
@@ -53,13 +55,13 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	
 	private BufferedImage[] squareImages;
 	private BufferedImage fullBoard;
-	private ImageIcon squareAnimationImages[][];
+	private Image[] squareAnimationImages;
 	
 	
 	JViewport screenView;
 	
 	
-	private boolean isRotated = false;
+	private boolean isZoomed = false;
 	private int focusedSquare;
 	
 	public Board3( Square[] squares,  Display display) {
@@ -73,6 +75,22 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		overlay = new JPanel();
 		
 		numOfSquares = squares.length - squares.length%4;
+		
+		squaresPanel = new JPanel() {
+			public void paint(Graphics g) {
+			
+			Graphics2D g2D = (Graphics2D)g;
+			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			int wid = getWidth();
+			int high = getHeight();
+			
+			g2D.rotate(Math.toRadians(rotation), wid/2, high/2);
+			
+			super.paint(g);
+			
+		}};
 		
 		setUpSquares();
 		setUpInfo();
@@ -293,21 +311,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private void setUpSquares() {
 		
 		
-		squaresPanel = new JPanel() {
-			public void paint(Graphics g) {
-			
-			Graphics2D g2D = (Graphics2D)g;
-			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-			
-			int wid = getWidth();
-			int high = getHeight();
-			
-			//g2D.rotate(Math.toRadians(rotation), wid/2, high/2);
-			
-			super.paint(g);
-			
-		}};
+		
 		
 		squaresPanel.addMouseListener(this);
 		
@@ -327,7 +331,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			squareButtons[i] = new JButton() {
 				public void repaint() {
-					if(!disableButtons) super.repaint();
+					
 			    }
 			};
 			squareButtons[i].addActionListener(SP);
@@ -340,7 +344,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			squareButtons[i] = new JButton() {
 				public void repaint() {
-					if(!disableButtons) super.repaint();
+				
 			    }
 			};
 			squareButtons[i].addActionListener(SP);
@@ -353,7 +357,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 			squareButtons[i] = new JButton() {
 				public void repaint() {
-					if(!disableButtons) super.repaint();
+				
 			    }
 			};
 			squareButtons[i].addActionListener(SP);
@@ -365,7 +369,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			squareButtons[i] = new JButton() {
 				public void repaint() {
-					if(!disableButtons) super.repaint();
+					
 			    }
 			};
 			squareButtons[i].addActionListener(SP);
@@ -568,7 +572,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		for(int i = 0; i< numOfSquares; i++) {
 			ImageIcon im = new ImageIcon(squareImages[i]);
 			squareButtons[i].setIcon(im);
-			squareButtons[i].setMargin(new Insets(-5,-5,-5,-5));
+			squareButtons[i].setMargin(new Insets(-4,-4,-4,-4));
 			squareButtons[i].setBorder(null);
 		}
 	
@@ -583,7 +587,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 	private void expandBoard() {
 		
-		
+		int screenWidth = (int) sqex.getSize().getWidth();
+		int screenHeight = (int) sqex.getSize().getHeight();
 		
 		zoom = 3;
 	
@@ -611,10 +616,10 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 		
 			Graphics2D sqImGraphics = null;
-			fullBoard = new BufferedImage(defaultSize*zoom,defaultSize*zoom, BufferedImage.TYPE_INT_ARGB);
+			fullBoard = new BufferedImage(screenWidth*zoom,screenHeight*zoom, BufferedImage.TYPE_INT_ARGB);
 			sqImGraphics = fullBoard.createGraphics();
-		int offsetx = 0;
-		int offsety = 0;
+		int offsetx = (screenWidth- defaultSize)/2*zoom;
+		int offsety = (screenHeight - defaultSize)/2*zoom;
 		
 		
 		sqImGraphics.drawImage(squareAnimationImages[0], null, offsetx, offsety);
@@ -657,6 +662,58 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 	}
 	
+	private class createAnimation implements Runnable{
+		
+		private int rotation;
+		private int squarePos;
+
+		public createAnimation(int rotation, int squarePos) {
+			this.rotation = rotation;
+			this.squarePos = (squarePos + 1)*2;
+		}
+		
+		@Override
+		public void run() {
+			expandBoard();
+			
+			squareAnimationImages = new Image[30];
+			
+			int screenWidth = (int) sqex.getSize().getWidth();
+			int screenHeight = (int) sqex.getSize().getHeight();
+			
+			
+			
+			Graphics2D sqImGraphics = null;
+			
+			BufferedImage tempImage = new BufferedImage(screenWidth*zoom,screenHeight*zoom, BufferedImage.TYPE_INT_ARGB);
+			sqImGraphics = tempImage.createGraphics();
+			sqImGraphics.setColor(background);
+			
+			sqImGraphics.fillRect(0, 0, screenWidth*zoom,screenHeight*zoom);
+				
+			sqImGraphics.rotate(Math.toRadians(90 * rotation), screenWidth*zoom/2, screenHeight*zoom/2);
+			sqImGraphics.drawImage(fullBoard, null, 0, 0);
+			
+			for(int i = 0; i < 30; i++) {
+				
+				
+				
+				BufferedImage buffImage = tempImage.getSubimage(((screenWidth - defaultSize)/2 * 3)*i/90 + (defaultSize/2*3 * squarePos/7)*3*i/90,(screenHeight * 3) * i/90 * 2, (screenWidth * 3) -(screenWidth * 3)*i/90 * 2, (screenHeight * 3) - (screenHeight * 3) * i/90*2);
+				
+				
+				
+				squareAnimationImages[i] = buffImage.getScaledInstance(screenWidth,screenHeight,Image.SCALE_FAST);
+			}
+			
+			
+			
+			sqImGraphics.dispose();
+			
+		}
+		
+	}
+	
+	
 	
 	private class DiceRoller extends TimerTask 
 	{
@@ -695,204 +752,102 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 	}
 	
-	private class RaiseSquares extends TimerTask
-	{
-
-		int moveRight;
-		public RaiseSquares(int moveRight) {
-			this.moveRight = moveRight;
-		}
-		
-		int loop = 0;
-		@Override
-		public void run() {
-			
-			
-			Dimension viewSize = sqex.getSize();
-			Point viewPos = screenView.getViewPosition();
-			screenView.setViewPosition(new Point((int) viewPos.getX() + moveRight,(int)(viewPos.getY() + 1)));
-			
-			sqex.setBounds(0,0,(int) viewSize.getWidth() - moveRight,(int)(viewSize.getHeight() - 1));
-			loop++;
-			repaint();
-			revalidate();
-			if(loop >=400) {
-				
-				this.cancel();
-			}
-		}
-		
-	}
 	
-	
-	
-	private class BoardReseter extends TimerTask{
-
-		int moveRight;
-		int numOfRotations;
-		
-		public BoardReseter(int numOfRotations, int moveRight) {
-			this.numOfRotations = numOfRotations;
-			this.moveRight = moveRight;
-		}
-		
-		double multiplier = 3;
-		int loop = 0;
-		@Override
-		public void run() {
-			
-			Dimension viewSize = sqex.getSize();
-			Point viewPos = screenView.getViewPosition();
-			screenView.setViewPosition(new Point((int) viewPos.getX() - moveRight*4,(int)(viewPos.getY() -4)));
-			
-			sqex.setBounds(0,0,(int) viewSize.getWidth() + moveRight*4,(int)(viewSize.getHeight() + 4));
-			loop++;
-			repaint();
-			revalidate();
-			
-			rotation -= 0.9 * numOfRotations;
-			
-			System.out.println(multiplier);
-			System.out.println(defaultSize*multiplier);
-			boardImage.setIcon(new ImageIcon(fullBoard.getScaledInstance((int)(defaultSize*multiplier),(int) (defaultSize*multiplier),Image.SCALE_FAST)));
-			multiplier -= 0.02;
-			loop++;
-			if(loop == 200) {
-				boardImage.setIcon(new ImageIcon(fullBoard.getScaledInstance((int)(defaultSize),(int) (defaultSize),Image.SCALE_FAST)));
-				sqex.remove(squaresPanel);
-				setUpSquares();
-				screenView = new JViewport();
-				screenView.setView(squaresPanel);
-				
-				changeColours(background, foregroundColour, textColour, borderColour);
-				this.cancel();
-				isRotated = false;
-				
-			}
-		}
-		
-	}
 	
 	private class BoardSpinner extends TimerTask 
 	{
-	
-		
-		Dimension viewSize = screenView.getExtentSize();
-		Point viewPos = screenView.getViewPosition();
-		Dimension squareSize = squaresPanel.getSize();
-	
-			
-		double xPos = viewPos.getX() + viewSize.getWidth()/2;
-		double yPos = viewPos.getY() + viewSize.getHeight()/2;
-		
-		private boolean exWid = false;
-		private boolean exHigh = false;
-		
-		double distFromBottom;
-		private int numRot;
-		private int moveR;
-		
+
 		int loopNum = 0;
+		int numOfRotations;
 		
-		public BoardSpinner(int numOfRotations, int moveRight) {
-			super();
-	
-			moveR = moveRight;
-			this.numRot = numOfRotations;
+		public BoardSpinner(int edge) {
+			
+			numOfRotations = edge - currentRotation;
+			
+			if(numOfRotations == 3) numOfRotations = -1;
+			if(numOfRotations == -3) numOfRotations = 1;
+			
+			currentRotation = edge;
 		}
 
-		private double multiplier = 1;
-		
 		@Override
 		public void run() {
 			
 		
 			
-			if(loopNum < 100) {
+			if(loopNum < 30) {
 				
-				
-				squareSize = squaresPanel.getSize();
-				
-				
-				viewSize = screenView.getExtentSize();
-				viewPos = screenView.getViewPosition();
-				xPos = viewPos.getX() + viewSize.getWidth()/2;
-				yPos = viewPos.getY() + viewSize.getHeight()/2;
-				
-				distFromBottom = squareSize.getHeight() - viewPos.getY() - viewSize.getHeight();
-				Point newPos = new Point();
-				if(exWid && exHigh) {
-					//newPos.setLocation(1000*(multiplier)/2 - viewSize.getWidth()/2 , 1000*(multiplier)/2 - viewSize.getHeight()/2 );
-					
-					newPos.setLocation(xPos+(defaultSize*0.01)*(xPos/(defaultSize*multiplier))+ 5 + moveR - viewSize.getWidth()/2, yPos +defaultSize*0.01*yPos/(defaultSize*multiplier) - viewSize.getHeight()/2 + distFromBottom*(multiplier/3));
-				}
-				else {
-					if(exHigh) {
-						newPos.setLocation(viewPos.getX(), yPos +defaultSize*0.01*yPos/(defaultSize*multiplier) - viewSize.getHeight()/2 + distFromBottom*(multiplier/3));
-						
-						//newPos.setLocation(viewPos.getX() , 1000*multiplier/2 - viewSize.getHeight()/2);
-						
-						if(squareSize.getWidth() > viewSize.getWidth()) {
-							exWid = true;
-						}
-						
-					}
-					else {
-						
-						if(exWid) {
-							newPos.setLocation(1000*(multiplier)/2 - viewSize.getWidth()/2 ,viewPos.getY() );
-						}else {
-							if(squareSize.getWidth() > viewSize.getWidth()) {
-								exWid = true;
-							}
-						
-						}
-						if(squareSize.getHeight() > viewSize.getHeight()) {
-							exHigh = true;
-							
-						}
-					}
-				}
-				
-				
-				screenView.setViewPosition(newPos);
-							
-				
-				
+		
+				rotation += 3 * numOfRotations ;
 				repaint();
 				revalidate();
-					
-				boardImage.setIcon(new ImageIcon(fullBoard.getScaledInstance((int)(defaultSize*multiplier),(int) (defaultSize*multiplier),Image.SCALE_FAST)));
+			
+			} else {
 				
-
-				multiplier += 0.02;
-				
-				rotation += 0.9 * numRot;
-				
-				
-				
-				
-			}else {
-				boardImage.setIcon(new ImageIcon(fullBoard));
-				
-				Timer raiseSq = new Timer();
-				if(moveR == 0) {
-					raiseSq.scheduleAtFixedRate(new RaiseSquares(0), 0, 5);
-				}
-				else {
-					raiseSq.scheduleAtFixedRate(new RaiseSquares(1), 0, 5);
-				
-				}
-				
+				Timer rollDice = new Timer();
+				rollDice.scheduleAtFixedRate(new BoardZoom(true), 0, 10);
 				this.cancel();
 			}
 			
-			loopNum++;
+			loopNum++;	
 			
-			
-					
 		}
 		
+	}
+	
+	private class BoardZoom extends TimerTask{
+		
+		
+		private int loopNum = 0;
+		private boolean zoomIn = true;
+		
+		public BoardZoom(boolean zoomIn) {
+			
+			this.zoomIn = zoomIn;
+			
+		}
+
+		@Override
+		public void run() {
+			
+
+			if(loopNum == 1) {
+				rotation = 0;
+				for(int j = 0; j < numOfSquares; j++) {
+					squaresPanel.remove(squareButtons[j]);
+					
+				}
+			}
+			
+				
+			if(zoomIn) {
+				boardImage.setIcon(new ImageIcon(squareAnimationImages[loopNum]));
+			} else {
+				boardImage.setIcon(new ImageIcon(squareAnimationImages[29 - loopNum]));
+			}
+				
+			
+			if(loopNum == 29) {
+				if(!zoomIn) {
+					rotation = 90;
+					setUpSquares();
+					changeColours(background, foregroundColour, textColour, borderColour);
+					squaresPanel.remove(boardImage);
+					for(int j = 0; j < 30; j++) {
+						squareAnimationImages[j].flush();
+						squareAnimationImages[j] = null;
+						System.gc();
+						
+					}
+					
+					
+				}
+				this.cancel();
+			}
+			
+			loopNum++;	
+			
+		}
 	}
 	
 	
@@ -908,33 +863,37 @@ private class SquarePicker implements ActionListener
 				
 				for(int i = 0; i< numOfSquares; i++) {
 					if(ob.equals(squareButtons[i])) {
-						for(int j = 0; j < numOfSquares; j++) {
-							squaresPanel.remove(squareButtons[j]);
-							
-						}
-						expandBoard();
-						Timer rollDice = new Timer();
+						
+						
+						
+						Timer spin = new Timer();
 						
 						if( i > 0 && i < numOfSquares/4) {
-							rollDice.scheduleAtFixedRate(new BoardSpinner(2, 0), 0, 1);
+							spin.scheduleAtFixedRate(new BoardSpinner(2), 0, 10);
 						}
 						if( i > numOfSquares/4 && i < numOfSquares/2) {
-							rollDice.scheduleAtFixedRate(new BoardSpinner(1, 0), 0, 1);
+							spin.scheduleAtFixedRate(new BoardSpinner(1), 0, 10);
 						}
 						if( i > numOfSquares/2 && i < numOfSquares/4*3) {
-							rollDice.scheduleAtFixedRate(new BoardSpinner(0, 0), 0, 1);
+							spin.scheduleAtFixedRate(new BoardSpinner(0), 0, 10);
 						}
 						if( i > numOfSquares/4*3&& i < numOfSquares) {
-							rollDice.scheduleAtFixedRate(new BoardSpinner(-1, 0), 0, 1);
+							spin.scheduleAtFixedRate(new BoardSpinner(3), 0, 10);
 						}
 						
-						if(i ==0)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 10), 0, 1);
-						if(i ==numOfSquares/4)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
-						if(i ==numOfSquares/2)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
-						if(i ==numOfSquares/4*3)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
+						if(i ==0)spin.scheduleAtFixedRate(new BoardSpinner(2), 0, 10);
+						if(i ==numOfSquares/4)spin.scheduleAtFixedRate(new BoardSpinner(1), 0, 10);
+						if(i ==numOfSquares/2)spin.scheduleAtFixedRate(new BoardSpinner(0), 0, 10);
+						if(i ==numOfSquares/4*3)spin.scheduleAtFixedRate(new BoardSpinner(3), 0, 10);
+						
+						
+						
+						
+						Thread animationThread = new Thread(new createAnimation(1, 3));
+						animationThread.start();
 						
 						focusedSquare = i;
-						isRotated = true;
+						isZoomed = true;
 					}
 				}
 				
@@ -976,6 +935,14 @@ private class SquarePicker implements ActionListener
 		sqImGraphics.setColor(foregroundColour);
 		sqImGraphics.fillRect(0, colourHeight, width, width);
 		
+		int borderWidth = width/75;
+		
+		sqImGraphics.setColor(borderColour);
+		sqImGraphics.fillRect(0, 0, width, borderWidth);
+		sqImGraphics.fillRect(0, 0, borderWidth, colourHeight + width);
+		sqImGraphics.fillRect(0, colourHeight+ width-borderWidth, width, borderWidth);
+		sqImGraphics.fillRect( width-borderWidth, 0, borderWidth, colourHeight + width);
+		
 		sqImGraphics.setFont(font);
 		FontMetrics fontMet = sqImGraphics.getFontMetrics(font);
 		
@@ -1003,27 +970,14 @@ private class SquarePicker implements ActionListener
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(isRotated) {
+		if(isZoomed) {
+			
 			Timer rollDice = new Timer();
-			if( focusedSquare > 0 && focusedSquare < numOfSquares/4) {
-				rollDice.scheduleAtFixedRate(new BoardReseter(2, 0), 0, 1);
-			}
-			if( focusedSquare > numOfSquares/4 && focusedSquare < numOfSquares/2) {
-				rollDice.scheduleAtFixedRate(new BoardReseter(1, 0), 0, 1);
-			}
-			if( focusedSquare > numOfSquares/2 && focusedSquare < numOfSquares/4*3) {
-				rollDice.scheduleAtFixedRate(new BoardReseter(0, 0), 0, 1);
-			}
-			if( focusedSquare > numOfSquares/4*3&& focusedSquare < numOfSquares) {
-				rollDice.scheduleAtFixedRate(new BoardReseter(-1, 0), 0, 1);
-			}
+			rollDice.scheduleAtFixedRate(new BoardZoom(false), 0, 10);
+
+			isZoomed = false;
 			
-			if(focusedSquare ==0)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 10), 0, 1);
-			if(focusedSquare ==numOfSquares/4)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
-			if(focusedSquare ==numOfSquares/2)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
-			if(focusedSquare ==numOfSquares/4*3)rollDice.scheduleAtFixedRate(new BoardSpinner(2, 5), 0, 1);
 			
-		
 		}
 		
 	}

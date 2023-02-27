@@ -303,8 +303,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			int wid = getWidth();
 			int high = getHeight();
 			
-			//g2D.rotate(Math.toRadians(rotation), wid/2, high/2);
-			
+			g2D.rotate(Math.toRadians(rotation), wid/2, high/2);
+			//g2D.translate(0,-500);
 			super.paint(g);
 			
 		}};
@@ -710,13 +710,13 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			Dimension viewSize = sqex.getSize();
 			Point viewPos = screenView.getViewPosition();
-			screenView.setViewPosition(new Point((int) viewPos.getX() + moveRight,(int)(viewPos.getY() + 1)));
+			screenView.setViewPosition(new Point((int) viewPos.getX() + moveRight + 4,(int)(viewPos.getY() + 10)));
 			
-			sqex.setBounds(0,0,(int) viewSize.getWidth() - moveRight,(int)(viewSize.getHeight() - 1));
+			sqex.setBounds(0,0,(int) viewSize.getWidth() - moveRight + 4 ,(int)(viewSize.getHeight() - 5));
 			loop++;
 			repaint();
 			revalidate();
-			if(loop >=400) {
+			if(loop >=80) {
 				
 				this.cancel();
 			}
@@ -802,13 +802,13 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		}
 
 		private double multiplier = 1;
-		
+		private int speed = 1;
 		@Override
 		public void run() {
 			
 		
 			
-			if(loopNum < 100) {
+			if(loopNum < 40/speed) {
 				
 				
 				squareSize = squaresPanel.getSize();
@@ -819,12 +819,14 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				xPos = viewPos.getX() + viewSize.getWidth()/2;
 				yPos = viewPos.getY() + viewSize.getHeight()/2;
 				
+				
+				
 				distFromBottom = squareSize.getHeight() - viewPos.getY() - viewSize.getHeight();
 				Point newPos = new Point();
 				if(exWid && exHigh) {
 					//newPos.setLocation(1000*(multiplier)/2 - viewSize.getWidth()/2 , 1000*(multiplier)/2 - viewSize.getHeight()/2 );
 					
-					newPos.setLocation(xPos+(defaultSize*0.01)*(xPos/(defaultSize*multiplier))+ 5 + moveR - viewSize.getWidth()/2, yPos +defaultSize*0.01*yPos/(defaultSize*multiplier) - viewSize.getHeight()/2 + distFromBottom*(multiplier/3));
+					newPos.setLocation(xPos+(defaultSize*0.01)*(xPos/(defaultSize*multiplier))+ 25 + moveR - viewSize.getWidth()/2, yPos +defaultSize*0.01*yPos/(defaultSize*multiplier) - viewSize.getHeight()/2 + distFromBottom*(multiplier/3));
 				}
 				else {
 					if(exHigh) {
@@ -865,9 +867,9 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				boardImage.setIcon(new ImageIcon(fullBoard.getScaledInstance((int)(defaultSize*multiplier),(int) (defaultSize*multiplier),Image.SCALE_FAST)));
 				
 
-				multiplier += 0.02;
+				multiplier += 0.05 * speed;
 				
-				rotation += 0.9 * numRot;
+				rotation += 2.25 * numRot * speed;
 				
 				
 				
@@ -877,10 +879,10 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				
 				Timer raiseSq = new Timer();
 				if(moveR == 0) {
-					raiseSq.scheduleAtFixedRate(new RaiseSquares(0), 0, 5);
+					//raiseSq.scheduleAtFixedRate(new RaiseSquares(0), 0, 5);
 				}
 				else {
-					raiseSq.scheduleAtFixedRate(new RaiseSquares(1), 0, 5);
+					//raiseSq.scheduleAtFixedRate(new RaiseSquares(3), 0, 5);
 				
 				}
 				
@@ -975,6 +977,11 @@ private class SquarePicker implements ActionListener
 		sqImGraphics.fillRect(0, 0, width, colourHeight);
 		sqImGraphics.setColor(foregroundColour);
 		sqImGraphics.fillRect(0, colourHeight, width, width);
+		sqImGraphics.setColor(borderColour);
+		sqImGraphics.fillRect(0, 0, width, 4);
+		sqImGraphics.fillRect(0, 0, 2, colourHeight + width);
+		sqImGraphics.fillRect(0, colourHeight+ width-2, width, 2);
+		sqImGraphics.fillRect( width-4, 0, 4, colourHeight + width);
 		
 		sqImGraphics.setFont(font);
 		FontMetrics fontMet = sqImGraphics.getFontMetrics(font);
