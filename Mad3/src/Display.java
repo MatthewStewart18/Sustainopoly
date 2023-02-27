@@ -47,7 +47,7 @@ public class Display extends JFrame implements WindowStateListener {
 this.addComponentListener(new ComponentAdapter() {
 	    public void componentResized(ComponentEvent componentEvent) {
 	    	if(fullScreen) GB.resize(getBounds().getSize().width, getBounds().getSize().height);
-	    	else GB.resize(getBounds().getSize().width, getBounds().getSize().height);
+	    	else GB.resize(getBounds().getSize().width-15, getBounds().getSize().height-15);
 	    }
 	});
 				

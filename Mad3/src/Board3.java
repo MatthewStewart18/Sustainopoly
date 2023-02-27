@@ -27,7 +27,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private JMenu menu;
 
 	private JPanel squaresPanel, infoPanel, confirm, back, overlay, animationPanel;
-	private JScrollPane sqex;
+
 	
 	private int SQUARE_WIDTH = 150;
 	private int SQUARE_TOP_HEIGHT = 50;
@@ -35,6 +35,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private int defaultFontSize = 20;
 	private int zoom = 3;
 	private int defaultSize = 1000;
+	private int screenWidth;
+	private int screenHeight;
 	
 	private int currentRotation = 0;
 	
@@ -95,20 +97,15 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		setUpSquares();
 		setUpInfo();
 		
-		sqex = new JScrollPane(squaresPanel);
-		screenView = sqex.getViewport();
-		screenView.setOpaque(false);
-		screenView.setBorder(null);
 		
-		sqex.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-		sqex.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		setPreferredSize(new Dimension(100,500));
-		sqex.setPreferredSize(new Dimension(500,500));
-		//sel.addLayoutComponent("UPPER_LEFT_CORNER", squaresPanel);
+		
+		setPreferredSize(new Dimension(1000,1000));
+		squaresPanel.setPreferredSize(new Dimension(1000,1000));
+		
 		
 		overlay.setOpaque(false);
-		sqex.setOpaque(false);
-		sqex.setBackground(Color.YELLOW);
+		squaresPanel.setOpaque(false);
+		squaresPanel.setBackground(Color.YELLOW);
 		
 		squarePanelCon.gridx = 0;
 		squarePanelCon.gridy = 0;
@@ -116,18 +113,15 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		squarePanelCon.weightx = 1;
 		setUpDice();
 		//Add(sqex, -100);
-		sqex.setBounds(0,0,1000,1000);
+		squaresPanel.setBounds(0,0,1000,1000);
 		overlay.setBounds(000,000,100,100);
 		animationPanel.setBounds(200,200,1000,600);
 		
-		add(sqex,  1, 1);
-		add(overlay, 2, 2);
-		add(animationPanel, 3, 3);
-		System.out.println(getIndexOf(sqex));
-		System.out.println(getIndexOf(overlay));
-		System.out.println(getPosition(sqex));
-		System.out.println(getPosition(overlay));
-		add(Box.createRigidArea(new Dimension(100, 100)));
+		add(squaresPanel,  1, 1);
+		add(overlay, 5, 5);
+		//add(animationPanel, 3, 3);
+	
+	
 		squarePanelCon.gridx = 3;
 		squarePanelCon.anchor = GridBagConstraints.NORTH;
 		//add(infoPanel, squarePanelCon);
@@ -146,27 +140,41 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	}
 	
 	public void resize(int x, int y) {
-		
-		
-		
-		//JScrollBar bar = sqex.getVerticalScrollBar();
-		//bar.setPreferredSize(new Dimension(2000, 1));
-		//sqex.setPreferredSize(new Dimension(x-1, y-1));
-		sqex.setBounds(0,0,x,y);
+	
+		setBounds(0,0,x,y);
+		squaresPanel.setBounds(0,0,x,y);
 		overlay.setBounds(0,0,x,y);
-		//JScrollBar bar2 = sqex.getHorizontalScrollBar();
-		//bar2.setPreferredSize(new Dimension(20000, 10));
+		screenWidth = x;
+		screenHeight = y;
+		
+		if(screenWidth >= screenHeight ) {
+			defaultSize = screenHeight - screenHeight/10;
+		} else {
+			defaultSize = screenWidth - screenWidth/10;
+		}
+		
+		SQUARE_WIDTH = defaultSize/20*3;
+		SQUARE_TOP_HEIGHT = defaultSize/20;
+		changeColours(background, foregroundColour, textColour, borderColour);
+		
+		if(isZoomed) {
+			isZoomed = false;
+			Timer rollDice = new Timer();
+			rollDice.scheduleAtFixedRate(new BoardZoom(false), 0, 10);
+
+			
+		}
 	}
 	
 	private void setUpMenu() {
+		overlay.setLayout(new GridBagLayout());
 		
 		menu = new JMenu("MENU");
 		rules = new JMenuItem("Rules");
 		rules.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				Timer rollDice = new Timer();
-				rollDice.scheduleAtFixedRate(new DiceRoller( 1,  5), 0, 10);
+				
 			}
 		});
 		rules.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -204,9 +212,9 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 		
 		squarePanelCon.anchor = GridBagConstraints.NORTHEAST;
-		squarePanelCon.gridx = 0;
+		squarePanelCon.gridx = 1;
 		squarePanelCon.gridy = 0;
-		overlay.add(menuBar, BorderLayout.PAGE_START);
+		overlay.add(menuBar, squarePanelCon);
 		squarePanelCon.anchor = GridBagConstraints.CENTER;
 	}
 
@@ -218,20 +226,6 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		SpringLayout sprLayout = new SpringLayout();  
 		confirm.setLayout(sprLayout);
 		confirm.setBackground(background);
-		
-	
-		back = new JPanel();
-		back.setBackground(new Color(165, 165, 165, 100));
-		
-		squarePanelCon.fill = GridBagConstraints.BOTH;
-		squarePanelCon.anchor = GridBagConstraints.CENTER;
-		squarePanelCon.gridwidth = 5;
-		squarePanelCon.gridheight = 5;
-		squarePanelCon.gridx = 0;
-		squarePanelCon.gridy = 0;
-		
-		back.setOpaque(true);
-		add(back, squarePanelCon, 0);
 		
 		
 		JTextPane message = new JTextPane();
@@ -284,9 +278,20 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		sprLayout.putConstraint(SpringLayout.NORTH, yes, 5, SpringLayout.SOUTH, message);
 		
 		squarePanelCon.fill = GridBagConstraints.NONE;
-		overlay.add(confirm,BorderLayout.CENTER);
+		overlay.add(confirm,squarePanelCon);
 		
+		back = new JPanel();
+		back.setBackground(new Color(165, 165, 165, 200));
 		
+		squarePanelCon.fill = GridBagConstraints.BOTH;
+		squarePanelCon.anchor = GridBagConstraints.CENTER;
+		squarePanelCon.gridwidth = 5;
+		squarePanelCon.gridheight = 5;
+		squarePanelCon.gridx = 0;
+		squarePanelCon.gridy = 0;
+		
+		back.setOpaque(true);
+		overlay.add(back,squarePanelCon);
 		
 		repaint();
 		revalidate();
@@ -551,23 +556,23 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 
 		for(int i = 1; i < numOfSquares/4; i++) {
-			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 1, defaultFontSize);
+			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 1, (int) (SQUARE_WIDTH/7.5));
 		}
 		for(int i = numOfSquares/4; i < numOfSquares/2; i++) {
-			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 2, defaultFontSize);
+			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 2, (int) (SQUARE_WIDTH/7.5));
 		}
 		for(int i = numOfSquares/2; i < numOfSquares/4*3; i++) {
-			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 3, defaultFontSize);
+			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 3, (int) (SQUARE_WIDTH/7.5));
 		}
 		for(int i = numOfSquares/4*3; i < numOfSquares; i++) {
-			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 4, defaultFontSize);
+			squareImages[i] = createSquareImage(i, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 4, (int) (SQUARE_WIDTH/7.5));
 		}
 		
 		
-		squareImages[0] = createSquareImage(0, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 1, (int) (defaultFontSize*1.2));
-		squareImages[numOfSquares/4] = createSquareImage(numOfSquares/4, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 2, (int) (defaultFontSize*1.2));
-		squareImages[numOfSquares/2] = createSquareImage(numOfSquares/2, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 3, (int) (defaultFontSize*1.2));
-		squareImages[numOfSquares/4*3] = createSquareImage(numOfSquares/4*3, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 4, (int) (defaultFontSize*1.2));
+		squareImages[0] = createSquareImage(0, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 1, (int) (SQUARE_WIDTH/6.25));
+		squareImages[numOfSquares/4] = createSquareImage(numOfSquares/4, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 2, (int) (SQUARE_WIDTH/6.25));
+		squareImages[numOfSquares/2] = createSquareImage(numOfSquares/2, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 3, (int) (SQUARE_WIDTH/6.25));
+		squareImages[numOfSquares/4*3] = createSquareImage(numOfSquares/4*3, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 4, (int) (SQUARE_WIDTH/6.25));
 		
 		for(int i = 0; i< numOfSquares; i++) {
 			ImageIcon im = new ImageIcon(squareImages[i]);
@@ -587,30 +592,30 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 	private void expandBoard() {
 		
-		int screenWidth = (int) sqex.getSize().getWidth();
-		int screenHeight = (int) sqex.getSize().getHeight();
+		int screenWidth = (int) squaresPanel.getSize().getWidth();
+		int screenHeight = (int) squaresPanel.getSize().getHeight();
 		
 		zoom = 3;
 	
 		BufferedImage squareAnimationImages[] = new BufferedImage[numOfSquares];
 		
 		for(int i = 1; i < numOfSquares/4; i++) {
-			squareAnimationImages[i] = createSquareImage(i, 150*zoom, 50*zoom, 1, 20*zoom);
+			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH*zoom, SQUARE_TOP_HEIGHT*zoom, 1, (int) (SQUARE_WIDTH/7.5*zoom));
 		}
 		for(int i = numOfSquares/4 + 1; i < numOfSquares/2; i++) {
-			squareAnimationImages[i] = createSquareImage(i, 150*zoom, 50*zoom, 2, 20*zoom);
+			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH*zoom, SQUARE_TOP_HEIGHT*zoom, 2, (int) (SQUARE_WIDTH/7.5*zoom));
 		}
 		for(int i = numOfSquares/2 + 1; i < numOfSquares/4*3; i++) {
-			squareAnimationImages[i] = createSquareImage(i, 150*zoom, 50*zoom, 3, 20*zoom);
+			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH*zoom, SQUARE_TOP_HEIGHT*zoom, 3, (int) (SQUARE_WIDTH/7.50*zoom));
 		}
 		for(int i = numOfSquares/4*3 + 1; i < numOfSquares; i++) {
-			squareAnimationImages[i] = createSquareImage(i, 150*zoom, 50*zoom, 4, 20*zoom);
+			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH*zoom, SQUARE_TOP_HEIGHT*zoom, 4, (int) (SQUARE_WIDTH/7.5*zoom));
 		}
 		
-		squareAnimationImages[0] = createSquareImage(0, 200*zoom, 0, 1, 24*zoom);
-		squareAnimationImages[numOfSquares/4] = createSquareImage(numOfSquares/4, 200*zoom, 0, 2, 24*zoom);
-		squareAnimationImages[numOfSquares/2] = createSquareImage(numOfSquares/2, 200*zoom, 0, 3, 24*zoom);
-		squareAnimationImages[numOfSquares/4*3] = createSquareImage(numOfSquares/4*3, 200*zoom, 0, 4, 24*zoom);
+		squareAnimationImages[0] = createSquareImage(0, (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom, 0, 1, (int) (SQUARE_WIDTH/6.25*zoom));
+		squareAnimationImages[numOfSquares/4] = createSquareImage(numOfSquares/4, (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom, 0, 2, (int) (SQUARE_WIDTH/6.25*zoom));
+		squareAnimationImages[numOfSquares/2] = createSquareImage(numOfSquares/2, (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom, 0, 3, (int) (SQUARE_WIDTH/6.25*zoom));
+		squareAnimationImages[numOfSquares/4*3] = createSquareImage(numOfSquares/4*3, (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom, 0, 4, (int) (SQUARE_WIDTH/6.25*zoom));
 		
 		
 		
@@ -623,27 +628,27 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 		
 		sqImGraphics.drawImage(squareAnimationImages[0], null, offsetx, offsety);
-		offsetx += 200*zoom;
+		offsetx += (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom;
 		for(int i = 1; i < numOfSquares/4; i++) {
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
-			offsetx += 150*zoom;
+			offsetx += SQUARE_WIDTH*zoom;
 		}
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares/4], null, offsetx, offsety);
-		offsety += 200*zoom;
+		offsety += (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom;
 		for(int i = numOfSquares/4 + 1; i < numOfSquares/2; i++) {
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
-			offsety += 150*zoom;
+			offsety += SQUARE_WIDTH*zoom;
 		}
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares/2], null, offsetx, offsety);
 		for(int i = numOfSquares/2 + 1; i < numOfSquares/4*3; i++) {
-			offsetx -= 150*zoom;
+			offsetx -= SQUARE_WIDTH*zoom;
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);			
 		}
-		offsetx -= 200*zoom;
+		offsetx -= (SQUARE_WIDTH + SQUARE_TOP_HEIGHT)*zoom;
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares/4*3], null, offsetx, offsety);
 		
 		for(int i = numOfSquares/4*3 + 1; i < numOfSquares; i++) {
-			offsety -= 150*zoom;
+			offsety -= SQUARE_WIDTH*zoom;
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
 		}
 		
@@ -669,17 +674,19 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 		public createAnimation(int rotation, int squarePos) {
 			this.rotation = rotation;
-			this.squarePos = (squarePos + 1)*2;
+			this.squarePos = (squarePos -3)*6 + 3;
+			
+			if(squarePos == 0) this.squarePos --;
+			if(squarePos == 5) this.squarePos ++;
 		}
 		
 		@Override
 		public void run() {
 			expandBoard();
 			
-			squareAnimationImages = new Image[30];
+			squareAnimationImages = new Image[31];
 			
-			int screenWidth = (int) sqex.getSize().getWidth();
-			int screenHeight = (int) sqex.getSize().getHeight();
+			
 			
 			
 			
@@ -694,11 +701,14 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			sqImGraphics.rotate(Math.toRadians(90 * rotation), screenWidth*zoom/2, screenHeight*zoom/2);
 			sqImGraphics.drawImage(fullBoard, null, 0, 0);
 			
-			for(int i = 0; i < 30; i++) {
+			for(int i = 0; i < 31; i++) {
 				
+				int width = (screenWidth * 3) -(screenWidth * 3)*i/90 * 2;
+				int xOffset = (screenWidth + defaultSize *squarePos/20 * zoom/2) * i/30;
+				if(xOffset < 0) xOffset = 0;
+				else if(xOffset + width > screenWidth * zoom) xOffset = screenWidth * zoom - width;
 				
-				
-				BufferedImage buffImage = tempImage.getSubimage(((screenWidth - defaultSize)/2 * 3)*i/90 + (defaultSize/2*3 * squarePos/7)*3*i/90,(screenHeight * 3) * i/90 * 2, (screenWidth * 3) -(screenWidth * 3)*i/90 * 2, (screenHeight * 3) - (screenHeight * 3) * i/90*2);
+				BufferedImage buffImage = tempImage.getSubimage(xOffset,(screenHeight ) * i/30 * 2, width, (screenHeight * 3) - (screenHeight * 3) * i/90*2);
 				
 				
 				
@@ -768,6 +778,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			if(numOfRotations == -3) numOfRotations = 1;
 			
 			currentRotation = edge;
+			disableButtons = true;
 		}
 
 		@Override
@@ -783,9 +794,10 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				revalidate();
 			
 			} else {
-				
+				disableButtons = false;
 				Timer rollDice = new Timer();
 				rollDice.scheduleAtFixedRate(new BoardZoom(true), 0, 10);
+				
 				this.cancel();
 			}
 			
@@ -804,32 +816,29 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		public BoardZoom(boolean zoomIn) {
 			
 			this.zoomIn = zoomIn;
-			
+			disableButtons = true;
+			rotation = 0;
+				for(int j = 0; j < numOfSquares; j++) {
+					squaresPanel.remove(squareButtons[j]);
+					
+				}
 		}
 
 		@Override
 		public void run() {
 			
 
-			if(loopNum == 1) {
-				rotation = 0;
-				for(int j = 0; j < numOfSquares; j++) {
-					squaresPanel.remove(squareButtons[j]);
-					
-				}
-			}
-			
 				
 			if(zoomIn) {
 				boardImage.setIcon(new ImageIcon(squareAnimationImages[loopNum]));
 			} else {
-				boardImage.setIcon(new ImageIcon(squareAnimationImages[29 - loopNum]));
+				boardImage.setIcon(new ImageIcon(squareAnimationImages[30 - loopNum]));
 			}
 				
 			
-			if(loopNum == 29) {
+			if(loopNum == 30) {
 				if(!zoomIn) {
-					rotation = 90;
+					rotation = 90 * currentRotation;
 					setUpSquares();
 					changeColours(background, foregroundColour, textColour, borderColour);
 					squaresPanel.remove(boardImage);
@@ -842,6 +851,9 @@ public class Board3 extends JLayeredPane implements MouseListener{
 					
 					
 				}
+				disableButtons = false;
+				repaint();
+				revalidate();
 				this.cancel();
 			}
 			
@@ -858,39 +870,64 @@ private class SquarePicker implements ActionListener
 		public void actionPerformed(ActionEvent e) {
 			
 			// TODO Auto-generated method stub
-			if(disableButtons == false) {
+			if(!disableButtons) {
+				disableButtons = true;
 				Object ob = e.getSource();
 				
 				for(int i = 0; i< numOfSquares; i++) {
 					if(ob.equals(squareButtons[i])) {
 						
-						
-						
+						focusedSquare = i  - numOfSquares/4*currentRotation;
+						if(focusedSquare >= numOfSquares) focusedSquare -= numOfSquares;
+						else if(focusedSquare <0) focusedSquare += numOfSquares;
 						Timer spin = new Timer();
 						
-						if( i > 0 && i < numOfSquares/4) {
+						if( focusedSquare > 0 && focusedSquare < numOfSquares/4) {
 							spin.scheduleAtFixedRate(new BoardSpinner(2), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(2, numOfSquares/4-focusedSquare));
+							animationThread.start();
 						}
-						if( i > numOfSquares/4 && i < numOfSquares/2) {
+						if( focusedSquare > numOfSquares/4 && focusedSquare < numOfSquares/2) {
 							spin.scheduleAtFixedRate(new BoardSpinner(1), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(1, numOfSquares/2-focusedSquare));
+							animationThread.start();
 						}
-						if( i > numOfSquares/2 && i < numOfSquares/4*3) {
+						if( focusedSquare > numOfSquares/2 && focusedSquare < numOfSquares/4*3) {
 							spin.scheduleAtFixedRate(new BoardSpinner(0), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(0, numOfSquares/4*3-focusedSquare));
+							animationThread.start();
 						}
-						if( i > numOfSquares/4*3&& i < numOfSquares) {
+						if( focusedSquare > numOfSquares/4*3&& focusedSquare < numOfSquares) {
 							spin.scheduleAtFixedRate(new BoardSpinner(3), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(3, numOfSquares-focusedSquare));
+							animationThread.start();
 						}
 						
-						if(i ==0)spin.scheduleAtFixedRate(new BoardSpinner(2), 0, 10);
-						if(i ==numOfSquares/4)spin.scheduleAtFixedRate(new BoardSpinner(1), 0, 10);
-						if(i ==numOfSquares/2)spin.scheduleAtFixedRate(new BoardSpinner(0), 0, 10);
-						if(i ==numOfSquares/4*3)spin.scheduleAtFixedRate(new BoardSpinner(3), 0, 10);
+						if(focusedSquare ==0) {
+							spin.scheduleAtFixedRate(new BoardSpinner(2), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(2, 5));
+							animationThread.start();
+						}
+						if(focusedSquare ==numOfSquares/4) {
+							spin.scheduleAtFixedRate(new BoardSpinner(1), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(1, 5));
+							animationThread.start();
+						}
+						if(focusedSquare ==numOfSquares/2) {
+							spin.scheduleAtFixedRate(new BoardSpinner(0), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(0, 5));
+							animationThread.start();
+						}
+						if(focusedSquare ==numOfSquares/4*3) {
+							spin.scheduleAtFixedRate(new BoardSpinner(3), 0, 10);
+							Thread animationThread = new Thread(new createAnimation(3, 5));
+							animationThread.start();
+						}
 						
 						
 						
 						
-						Thread animationThread = new Thread(new createAnimation(1, 3));
-						animationThread.start();
+						
 						
 						focusedSquare = i;
 						isZoomed = true;
@@ -970,7 +1007,7 @@ private class SquarePicker implements ActionListener
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(isZoomed) {
+		if(isZoomed && !disableButtons) {
 			
 			Timer rollDice = new Timer();
 			rollDice.scheduleAtFixedRate(new BoardZoom(false), 0, 10);
