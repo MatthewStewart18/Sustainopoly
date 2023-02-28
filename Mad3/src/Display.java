@@ -42,7 +42,7 @@ public class Display extends JFrame implements WindowStateListener {
         
         this.setBackground(Color.blue);
         addWindowStateListener(this);
-       // h();
+        h();
         
 this.addComponentListener(new ComponentAdapter() {
 	    public void componentResized(ComponentEvent componentEvent) {

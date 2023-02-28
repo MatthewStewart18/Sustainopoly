@@ -1,4 +1,6 @@
 import java.awt.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -6,6 +8,7 @@ import javax.swing.text.*;
 
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -18,7 +21,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	
 	private JButton squareButtons[], diceButton;
 	
-	private JLabel dice[];
+	private JLabel dice;
 	private ImageIcon[] dicePics;
 	
 	private GridBagConstraints squarePanelCon;
@@ -32,7 +35,6 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private int SQUARE_WIDTH = 150;
 	private int SQUARE_TOP_HEIGHT = 50;
 	private int numOfSquares = 20;
-	private int defaultFontSize = 20;
 	private int zoom = 3;
 	private int defaultSize = 1000;
 	private int screenWidth;
@@ -44,6 +46,9 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 	JLabel boardImage;
 	
+	private BufferedImage[] topDice; 
+	private BufferedImage[] botDice;
+	private BufferedImage backgroundDice;
 	
 	private JMenuItem rules, accessibility, exit;
 	
@@ -119,7 +124,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 		add(squaresPanel,  1, 1);
 		add(overlay, 5, 5);
-		//add(animationPanel, 3, 3);
+		add(animationPanel, 3, 3);
 	
 	
 		squarePanelCon.gridx = 3;
@@ -144,6 +149,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		setBounds(0,0,x,y);
 		squaresPanel.setBounds(0,0,x,y);
 		overlay.setBounds(0,0,x,y);
+		animationPanel.setBounds(0,0,x,y);
 		screenWidth = x;
 		screenHeight = y;
 		
@@ -278,17 +284,18 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		sprLayout.putConstraint(SpringLayout.NORTH, yes, 5, SpringLayout.SOUTH, message);
 		
 		squarePanelCon.fill = GridBagConstraints.NONE;
+		squarePanelCon.anchor = GridBagConstraints.CENTER;
+		squarePanelCon.gridwidth = 5;
+		squarePanelCon.gridheight = 5;
+		squarePanelCon.gridx = 0;
+		squarePanelCon.gridy = 0;
 		overlay.add(confirm,squarePanelCon);
 		
 		back = new JPanel();
 		back.setBackground(new Color(165, 165, 165, 200));
 		
 		squarePanelCon.fill = GridBagConstraints.BOTH;
-		squarePanelCon.anchor = GridBagConstraints.CENTER;
-		squarePanelCon.gridwidth = 5;
-		squarePanelCon.gridheight = 5;
-		squarePanelCon.gridx = 0;
-		squarePanelCon.gridy = 0;
+		
 		
 		back.setOpaque(true);
 		overlay.add(back,squarePanelCon);
@@ -300,7 +307,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	public void removeConfirmationPanel() {
 		disableButtons(false);
 		overlay.remove(confirm);
-		remove(back);
+		overlay.remove(back);
 		repaint();
 		revalidate();
 	}
@@ -412,35 +419,46 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 	private void setUpDice(){
 		
-		dicePics = new ImageIcon[180];
+		dicePics = new ImageIcon[60];
 		
-		for(int i = 1; i <= 165; i++)
+		for(int i = 1; i <= 59; i++)
 		{
 			dicePics[i-1]= new ImageIcon("dice//dice ("+i+").png");
 		}
-		dice = new JLabel[2];
-		dice[0] = new JLabel();
-		//dice[1] = new JLabel(dicePics[2]);
+		
+		dice = new JLabel();
+		
+		topDice = new BufferedImage[6];
+		botDice = new BufferedImage[6];
+		
+		for(int i = 1; i <= 6; i++) {
+			
+				try {
+					topDice[i-1] = ImageIO.read(new File("dice//dicetop" + i + ".png"));
+					botDice[i-1] = ImageIO.read(new File("dice//dicebot" + i + ".png"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+		
+		}
 		
 		animationPanel = new JPanel();
 		animationPanel.setOpaque(false);
 		
+		
+		squarePanelCon.gridwidth = 2;
+		squarePanelCon.gridheight = 1;
+		squarePanelCon.gridx = 1;
+		squarePanelCon.gridy = 1;
+		squarePanelCon.ipadx = 0;
+
 		squarePanelCon.anchor = GridBagConstraints.EAST;
-		squarePanelCon.gridwidth = 1;
-		squarePanelCon.gridheight = 2;
-		squarePanelCon.gridx = 3;
-		squarePanelCon.gridy = 3;
-		squarePanelCon.ipadx = 5;
-		//squaresPanel.add(dice[0], squarePanelCon);
-		squarePanelCon.gridx = 4;
-		squarePanelCon.anchor = GridBagConstraints.WEST;
-		//squaresPanel.add(dice[1], squarePanelCon);
-		squarePanelCon.anchor = GridBagConstraints.CENTER;
-		squareButtons[5].setIcon(dicePics[60]);
 		
 		animationPanel.setLayout(new GridBagLayout());
 		
-		animationPanel.add(dice[0]);
+		animationPanel.add(dice, squarePanelCon);
 		
 		diceButton = new JButton();
 		diceButton.setOpaque(false);
@@ -449,14 +467,29 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			public void actionPerformed(ActionEvent e)
 			{
 				Timer rollDice = new Timer();
-				rollDice.scheduleAtFixedRate(new DiceRoller( 1,  5), 0, 10);
+				rollDice.scheduleAtFixedRate(new DiceRoller(), 0, 40);
 				
 			}
 		});
-		squarePanelCon.gridx = 0;
-		squarePanelCon.gridwidth = 0;
-		squarePanelCon.ipady = dicePics[2].getIconHeight();
-		squarePanelCon.ipadx = dicePics[2].getIconWidth() * 2;
+		
+		Graphics2D sqImGraphics = null;
+		backgroundDice = new BufferedImage(220, 140, BufferedImage.TYPE_INT_ARGB);
+		sqImGraphics = backgroundDice.createGraphics();
+		
+		sqImGraphics.drawImage(botDice[2], null, -310, -410);
+		sqImGraphics.drawImage(topDice[5], null, -210, -180);
+		
+		sqImGraphics.dispose();
+		diceButton.setIcon(new ImageIcon(backgroundDice));
+		
+		
+		squarePanelCon.anchor = GridBagConstraints.CENTER;
+		squarePanelCon.ipadx = 0;
+		squarePanelCon.ipady = 0;
+		squarePanelCon.gridx = 1;
+		squarePanelCon.gridy = 1;
+		squarePanelCon.gridwidth = 1;
+		squarePanelCon.gridheight = 1;
 		diceButton.setToolTipText("Click dice to roll");
 		diceButton.setBorder(null);
 		
@@ -727,32 +760,61 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	
 	private class DiceRoller extends TimerTask 
 	{
-		int dice1;
-		int dice2;
 
-		public DiceRoller(int dice1, int dice2) {
+	
+		
+		public DiceRoller() {
 			super();
 			
-			this.dice1 = dice1;
-			this.dice2 = dice2;
+			
+			diceButton.setIcon(null);
+			//finalDice = game.rolldice();
+		
+			int[] finalDice = {2,6};
+			
+			BufferedImage finalImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D sqImGraphics = null;
+			sqImGraphics = finalImage.createGraphics();
+			
+			
+			sqImGraphics.drawImage(topDice[finalDice[0]-1], null, 0, 0);
+			sqImGraphics.drawImage(botDice[finalDice[1]-1], null, 0, 0);
+			
+			dicePics[59] = new ImageIcon(finalImage);
+			sqImGraphics.dispose();
+			
+			backgroundDice = new BufferedImage(220, 140, BufferedImage.TYPE_INT_ARGB);
+			sqImGraphics = backgroundDice.createGraphics();
+			
+			sqImGraphics.drawImage(botDice[finalDice[0]-1], null, -310, -410);
+			sqImGraphics.drawImage(topDice[finalDice[1]-1], null, -210, -180);
+			
+			sqImGraphics.dispose();
+			
+			
 		}
 		
 		private int dieNum = 0;
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			dice[0].setIcon(dicePics[dieNum]);
+
+			if(dieNum < 60) 
+			{
+				
+				dice.setIcon(dicePics[dieNum]);
 			
-			animationPanel.repaint();
+				animationPanel.repaint();
+
+			}
+			
 			
 			dieNum++;
 			
 			
-			if(dieNum >= 165) 
+			if(dieNum > 120) 
 			{
-				
-				//dice[0].setIcon(dicePics[dice1-1]);		
-				//dice[1].setIcon(dicePics[dice2-1]);
+				dice.setIcon(null);
+				diceButton.setIcon(new ImageIcon(backgroundDice));
 				//Game.movePlayer(int dice1, int dice2)
 				this.cancel();
 			}
@@ -779,6 +841,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			currentRotation = edge;
 			disableButtons = true;
+			
+			
 		}
 
 		@Override
@@ -795,6 +859,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			} else {
 				disableButtons = false;
+				
 				Timer rollDice = new Timer();
 				rollDice.scheduleAtFixedRate(new BoardZoom(true), 0, 10);
 				
@@ -817,6 +882,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			
 			this.zoomIn = zoomIn;
 			disableButtons = true;
+			diceButton.setIcon(null);
 			rotation = 0;
 				for(int j = 0; j < numOfSquares; j++) {
 					squaresPanel.remove(squareButtons[j]);
@@ -848,7 +914,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 						System.gc();
 						
 					}
-					
+					diceButton.setIcon(new ImageIcon(backgroundDice));
 					
 				}
 				disableButtons = false;
