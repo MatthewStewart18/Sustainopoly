@@ -20,7 +20,7 @@ public class AccessibilityPanel extends JPanel implements ActionListener{
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				display.openBoard();
+				display.returnToPrev();
 			}
 		});
 		
@@ -52,7 +52,7 @@ public class AccessibilityPanel extends JPanel implements ActionListener{
 			display.setColours(new Color(227, 199, 112),new Color(255, 174, 109),Color.BLACK,new Color(254, 205, 112), false);
 		}else if(selected == 4) {
 			
-			display.setColours(new Color(129, 12, 168),new Color(193, 71, 233),new Color(229, 184, 244),new Color(45, 3, 59), false);
+			display.setColours(new Color(129, 12, 168),new Color(193, 71, 233),new Color(229, 184, 244),new Color(45, 3, 59), true);
 		}else if(selected == 5) {
 			
 			display.setColours(new Color(0, 0, 0),new Color(21, 0, 80),new Color(251, 37, 118),new Color(63, 0, 113), true);
