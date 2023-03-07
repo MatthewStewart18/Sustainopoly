@@ -3,10 +3,10 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.event.*;
 
-public class AccessibilityPanel extends JPanel implements ActionListener{
+public class DisplayOptions extends JPanel implements ActionListener{
 	JComboBox colourOptions;
 	Display display;
-	public AccessibilityPanel(Display display) {
+	public DisplayOptions(Display display) {
 		
 		this.display = display;
 		String[] colours = {"LightMode", "LightMode(High Contrast)", "DarkMode", "DarkMode(High Contrast)", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
