@@ -1459,6 +1459,20 @@ private class SquarePicker implements ActionListener
 					
 					if(i == 0) {
 						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  0, 0, null);
+					}else if(i == 1){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  width/8*3, 0, null);
+					}else if(i == 2){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  width/4*3, 0, null);
+					}else if(i == 3){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  0, width/8*3, null);
+					}else if(i == 4){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  width/4*3, width/8*3, null);
+					}else if(i == 5){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  0, width/4*3, null);
+					}else if(i == 6){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  width/8*3, width/4*3, null);
+					}else if(i == 7){
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/4,width/4,Image.SCALE_FAST),  width/4*3, width/4*3, null);
 					}
 					
 				}
@@ -1470,6 +1484,20 @@ private class SquarePicker implements ActionListener
 					
 					if(i == 0) {
 						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  0, colourHeight, null);
+					} else if(i == 1) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  width/3, colourHeight, null);
+					} else if(i == 2) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  width/3*2, colourHeight, null);
+					} else if(i == 3) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  0, colourHeight + width/3, null);
+					} else if(i == 4) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  width/3*2, colourHeight + width/3, null);
+					} else if(i == 5) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  0, colourHeight + width/3*2, null);
+					} else if(i == 6) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  width/3, colourHeight + width/3*2, null);
+					} else if(i == 7) {
+						sqImGraphics.drawImage(playerIcons[i].getScaledInstance(width/3,width/3,Image.SCALE_FAST),  width/3*2, colourHeight + width/3*2, null);
 					}
 					
 				}
