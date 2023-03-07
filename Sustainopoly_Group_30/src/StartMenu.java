@@ -172,7 +172,7 @@ public class StartMenu extends JPanel {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				display.openAccessability();
+				display.openDisplayOptions();
 			}
 			
 		}));

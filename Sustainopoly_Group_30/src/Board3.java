@@ -206,7 +206,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		rules.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				 movePlayer(1, 12);
+				display.openRules();
 			}
 		});
 		rules.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -216,7 +216,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		accessibility.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				display.openAccessability();
+				display.openDisplayOptions();
 			}
 		});
 		accessibility.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -229,7 +229,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				getConfirmation(new ActionListener() {
 					public void actionPerformed(ActionEvent e)
 					{
-						System.exit(0);
+						display.returnToMainMenu();
 						removeConfirmationPanel();
 					}
 				}, "Are you sure you want to exit\nYou will lose all your progress");
