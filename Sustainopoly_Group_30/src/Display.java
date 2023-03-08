@@ -23,7 +23,7 @@ public class Display extends JFrame{
 	private boolean darkMode = false;
 	
 	
-	private Board3 GB;
+	private Board GB;
 	private StartMenu gameStartMenu;
 	private DisplaySettings displaySettings;
 	Rules rulesPanel;
