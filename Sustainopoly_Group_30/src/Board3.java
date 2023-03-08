@@ -54,7 +54,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private BufferedImage[] botDice;
 	private BufferedImage backgroundDice;
 	
-	private JMenuItem rules, accessibility, exit;
+	private JMenuItem rules, displaySettings, exit;
 	
 	private SquarePicker SP = new SquarePicker();
 	
@@ -212,15 +212,15 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		rules.setFont(new Font("Arial", Font.PLAIN, 40));
 		menu.add(rules);
 		
-		accessibility = new JMenuItem("Accessibility");
-		accessibility.addActionListener(new ActionListener() {
+		displaySettings = new JMenuItem("DisplaySettings");
+		displaySettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
 				display.openDisplayOptions();
 			}
 		});
-		accessibility.setFont(new Font("Arial", Font.PLAIN, 40));
-		menu.add(accessibility);
+		displaySettings.setFont(new Font("Arial", Font.PLAIN, 40));
+		menu.add(displaySettings);
 		
 		exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
@@ -941,13 +941,13 @@ public class Board3 extends JLayeredPane implements MouseListener{
 		
 		
 		rules.setBackground(foregroundColour);
-		accessibility.setBackground(foregroundColour);
+		displaySettings.setBackground(foregroundColour);
 		exit.setBackground(foregroundColour);
 		rules.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, border));
-		accessibility.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, border));
+		displaySettings.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, border));
 		exit.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, border));
 		rules.setForeground(text);
-		accessibility.setForeground(text);
+		displaySettings.setForeground(text);
 		exit.setForeground(text);
 		
 		

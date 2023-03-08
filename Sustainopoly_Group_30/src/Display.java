@@ -25,7 +25,7 @@ public class Display extends JFrame{
 	
 	private Board3 GB;
 	private StartMenu gameStartMenu;
-	private DisplayOptions displayOptions;
+	private DisplaySettings displaySettings;
 	Rules rulesPanel;
 	
 	CardLayout layout;
@@ -46,13 +46,13 @@ public class Display extends JFrame{
 		layout = new CardLayout();//creates a new cardLayout LayoutManager
 		setLayout(layout);//sets the frames panels layout to the cardLayout
 		
-		displayOptions = new DisplayOptions(this);//creates a new DisplayOptions panel
+		displaySettings = new DisplaySettings(this);//creates a new DisplaySettings panel
 		gameStartMenu = new StartMenu(this);//creates a new StartMenu panel
 		rulesPanel = new Rules(this);//creates a new Rules panel
 		
 		add(gameStartMenu, "startMenu");//adds and shows the StartMenu to the card layout with the name startMenu
 		
-		add(displayOptions, "display options");//adds the DisplayOptions to the card layout with the name display options
+		add(displaySettings, "displaySettings");//adds the DisplaySettings to the card layout with the name display options
 		
 		add(rulesPanel, "rules");//adds the rulesPanel to the card layout with the name rules
 		
@@ -97,6 +97,7 @@ public class Display extends JFrame{
 		if (gameStartMenu != null) {
 			gameStartMenu.resize(getBounds().getSize().width, getBounds().getSize().height);//resizes the start menu
 		}
+		displaySettings.resize(getBounds().getSize().width, getBounds().getSize().height);
 	}
 
 	/**
@@ -154,13 +155,14 @@ public class Display extends JFrame{
 		if(GB != null) {
 			GB.changeColours(background, foreground, text, border, dark);//sets the board colours
 		}
+		displaySettings.changeColours(background, foreground, text, border, dark);
 	}
 	
 	/**
-	 * changes the panel shown to be the displayOptions
+	 * changes the panel shown to be the displaySettings
 	 */
 	public void openDisplayOptions() {
-		layout.show(this.getContentPane(), "display options");
+		layout.show(this.getContentPane(), "displaySettings");
 	}
 	
 	/**
