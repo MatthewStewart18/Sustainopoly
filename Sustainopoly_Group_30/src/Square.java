@@ -1,6 +1,19 @@
 import java.awt.*;
 public class Square {
 	
+	protected int index;
+	protected final String name;
+	
+	public Square(String name) {
+		this.name = name;
+	}
+	
+	public void doAction(Player currentPlayer) {
+	};
+	
+	public String toString() {
+		return name;
+	}
 	
 	public String getName() {
 		return "Advertisement";
