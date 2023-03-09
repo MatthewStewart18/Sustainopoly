@@ -159,6 +159,7 @@ public class StartMenu extends JPanel {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				display.openRules();
 			}
 			
 		}));
@@ -337,19 +338,50 @@ public class StartMenu extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				if(players.size()== 0) {
+					submitPlayersLabel.setText("create a player");
+					return;
+				}
+				
 				boolean check = true;
 				
 				for(int i = 0; i< players.size();i++) {
 					
-					if(players.get(i)[0]== null) check = false;//if any of the player names is null then sets the check to false
+					if(players.get(i)[0]== null|| players.get(i)[0].equals("")) {
+						submitPlayersLabel.setText("Each Player must have a name");//checks if any of the player names is null then sets the warning message
+						check = false;
+						break;
+					}
+					
+					//checks if any player has a character in their name that isn't a letter or a number, if they do it displays a warning
+					for(int j = 0; j < players.get(i)[0].length(); j++) {
+						char character = players.get(i)[0].charAt(j);
+						if(!(character >= 'a' && character <= 'z' || character >= 'A' && character <= 'Z'|| character >= '1' && character <= '9' )) {
+							submitPlayersLabel.setText("Player names can only contain letters and numbers ");
+							check = false;
+							break;
+						}
+					}
 					
 					for(int j = 0; j< players.size();j++) {
 						
-						if(players.get(i)[0].equals(players.get(j)[0]) && i!=j) check = false;//if any 2 players have the same name then sets the check to false
+						if(players.get(i)[0].equals(players.get(j)[0]) && i!=j) {
+							submitPlayersLabel.setText("Each Player must have a unique name");//checks if any 2 players have the same name then sets the warning message
+							check = false;
+							break;
+						}
 						
-						else if (players.get(i)[1].equals(players.get(j)[1]) && i != j) check = false;//if any 2 players have the same colour then sets the check to false
+						else if (players.get(i)[1].equals(players.get(j)[1]) && i != j) {
+							submitPlayersLabel.setText("Each Player must have a unique Colour");//checks if any 2 players have the same colour then sets the warning message
+							check = false;
+							break;
+						}
 
-						else if (players.get(i)[2].equals(players.get(j)[2]) && i != j) check = false;//if any 2 players have the same icon then sets the check to false
+						else if (players.get(i)[2].equals(players.get(j)[2]) && i != j) {
+							submitPlayersLabel.setText("Each Player must have a unique Icon");//checks if any 2 players have the same icon then sets the warning message
+							check = false;
+							break;
+						}
 					}
 
 				}
@@ -357,7 +389,7 @@ public class StartMenu extends JPanel {
 				if (check) {
 					display.startGame(players);//if the check was true then call the Display method to start the game with the players information
 				}
-				submitPlayersLabel.setText("Each Player must have a unique Colour and Icon");//if the check was false then tell the player
+				
 			}
 
 		}), BorderLayout.PAGE_END);

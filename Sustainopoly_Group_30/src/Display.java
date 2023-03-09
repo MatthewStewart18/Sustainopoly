@@ -98,6 +98,7 @@ public class Display extends JFrame{
 			gameStartMenu.resize(getBounds().getSize().width, getBounds().getSize().height);//resizes the start menu
 		}
 		displaySettings.resize(getBounds().getSize().width, getBounds().getSize().height);
+		rulesPanel.resize(getBounds().getSize().width, getBounds().getSize().height);
 	}
 
 	/**
@@ -156,6 +157,7 @@ public class Display extends JFrame{
 			GB.changeColours(background, foreground, text, border, dark);//sets the board colours
 		}
 		displaySettings.changeColours(background, foreground, text, border, dark);
+		rulesPanel.changeColours(background, foreground, text, border, dark);
 	}
 	
 	/**
@@ -172,11 +174,16 @@ public class Display extends JFrame{
 		layout.show(this.getContentPane(), "rules");
 	}
 	
-	/**
+	/**creates the end screen
 	 * changes the panel shown to be the end screen panel
 	 */
-	public void openEndScreen() {
-		
+	public void openEndScreen(boolean win) {
+		EndScreen endS = new EndScreen(this, win);
+		add(endS, "endScreen");
+		endS.resize(getBounds().getSize().width, getBounds().getSize().height);
+		endS.changeColours(background, foregroundColour, textColour, borderColour, darkMode);
+		layout.show(this.getContentPane(), "endScreen");
+		endS.resize(getBounds().getSize().width, getBounds().getSize().height);
 	}
 	
 	/**

@@ -29,8 +29,8 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private JPanel squaresPanel, infoPanel, confirm, back, overlay, animationPanel, backgroundPanel, squareInfo;
 
-	private int SQUARE_WIDTH = 150;
-	private int SQUARE_TOP_HEIGHT = 50;
+	private int squareWidth = 150;
+	private int squareHeight = 50;
 	private int numOfSquares = 20;
 	private int zoom = 3;
 	private int boardWidth = 1000;
@@ -53,18 +53,17 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private Square[] squares;
 	private Display display;
-	Game gameController;
+	private Game gameController;
 	
 	private boolean buttonsDisabled = false;
 
-	double rotation = 0;
+	private double rotation = 0;
 
 	private BufferedImage fullBoard, backgroundPict;
 	private Image[] squareAnimationImages;
 	private BufferedImage[] titles;
 
-	private JSpinner moneyNumber, timeNumber;
-	private JSlider spendMoney, spendTime;
+	
 
 	private boolean isZoomed = false;
 	private boolean finishedAnimation = false;
@@ -159,6 +158,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	public void resize(int x, int y) {
 
+		
 		setBounds(0, 0, x, y);
 		squaresPanel.setBounds(0, 0, x, y);
 		overlay.setBounds(0, 0, x, y);
@@ -174,18 +174,22 @@ public class Board extends JLayeredPane implements MouseListener {
 			boardWidth = screenWidth - screenWidth / 10;
 		}
 
-		SQUARE_WIDTH = boardWidth / numOfSquares * 3;
-		SQUARE_TOP_HEIGHT = boardWidth / numOfSquares;
+		squareWidth = boardWidth / numOfSquares * 3;
+		squareHeight = boardWidth / numOfSquares;
 		changeColours(background, foregroundColour, textColour, borderColour, darkMode);
 
+		zoomOut();
+
+	}
+	
+	public void zoomOut() {
 		if (isZoomed) {
 			isZoomed = false;
-			Timer rollDice = new Timer();
-			rollDice.scheduleAtFixedRate(new BoardZoom(false), 0, 10);
+			Timer zoomOut = new Timer();
+			zoomOut.scheduleAtFixedRate(new BoardZoom(false), 0, 10);
 			infoPanel.remove(squareInfo);
 
 		}
-
 	}
 
 	private void setUpMenu() {
@@ -362,7 +366,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		text.setBackground(foregroundColour);
 		text.setFont(new Font("Arial", Font.PLAIN, 40));
 		text.setPreferredSize(new Dimension(screenWidth/4, screenHeight/4));
-		text.setText("\n\n" + messageText);
+		text.setText( messageText);
 		
 		
 
@@ -779,90 +783,42 @@ public class Board extends JLayeredPane implements MouseListener {
 	public void displaySquareInfoAndResources(int squareNum) {
 
 		displaySquareInfo(squareNum);
+		
+		JSpinner moneyNumber, timeNumber;
+		JSlider spendMoney, spendTime;
 
 		infoCon.weightx = 0;
 		infoCon.weighty = 0;
 		infoCon.gridy = 2;
+		infoCon.gridwidth = 2;
 
 		JLabel resourceSubmission = new JLabel("Select the amount you want to enter:");
 		resourceSubmission.setForeground(textColour);
 		resourceSubmission.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
 
 		squareInfo.add(resourceSubmission, infoCon);
-
+		infoCon.fill = GridBagConstraints.HORIZONTAL;
+		
+		int max = squares[squareNum].getMaxMoney() - squares[squareNum].getMoney();
+		
+		spendMoney = new JSlider(JSlider.HORIZONTAL, 0, max, 0);
+		moneyNumber = new JSpinner();
+		
 		if (squares[squareNum].getMaxMoney() > 0) {
-			spendMoney = new JSlider(JSlider.HORIZONTAL, 0,
-					squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 0);
+			
+			int spacing = max/4 - (max/4)%10 + 10;
+			
 			spendMoney.setForeground(textColour);
 			spendMoney.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
 
-			spendMoney.setMajorTickSpacing(500);
-			spendMoney.setMinorTickSpacing(100);
+			spendMoney.setMajorTickSpacing(spacing);
+			spendMoney.setMinorTickSpacing(spacing/5);
 			spendMoney.setPaintTicks(true);
 			spendMoney.setPaintLabels(true);
-			spendMoney.addChangeListener(new ChangeListener() {
-
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					moneyNumber.setValue(spendMoney.getValue());
-
-				}
-
-			});
+			
 			spendMoney.setBackground(background);
-
-		}
-
-		if (squares[squareNum].getMaxTime() > 0) {
-			spendTime = new JSlider(JSlider.HORIZONTAL, 0,
-					squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 0);
-			spendTime.setForeground(textColour);
-			spendTime.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
-
-			spendTime.setMajorTickSpacing(50);
-			spendTime.setMinorTickSpacing(10);
-			spendTime.setPaintTicks(true);
-			spendTime.setPaintLabels(true);
-			spendTime.addChangeListener(new ChangeListener() {
-
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					timeNumber.setValue(spendTime.getValue());
-
-				}
-
-			});
-			spendTime.setBackground(background);
-		}
-		infoCon.gridy = 4;
-
-		infoCon.fill = GridBagConstraints.HORIZONTAL;
-		if (squares[squareNum].getMaxMoney() > 0) {
-			squareInfo.add(spendMoney, infoCon);
-		}
-		infoCon.gridy = 6;
-		if (squares[squareNum].getMaxTime() > 0) {
-			squareInfo.add(spendTime, infoCon);
-		}
-		infoCon.gridwidth = 1;
-		infoCon.gridy = 3;
-		infoCon.fill = GridBagConstraints.NONE;
-
-		if (squares[squareNum].getMaxMoney() > 0) {
-			JLabel moneySpinnerLabel = new JLabel("Money:");
-			squareInfo.add(moneySpinnerLabel, infoCon);
-			moneySpinnerLabel.setForeground(textColour);
-			moneySpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
-		}
-		infoCon.gridy = 5;
-		if (squares[squareNum].getMaxTime() > 0) {
-			JLabel timeSpinnerLabel = new JLabel("Time:");
-			squareInfo.add(timeSpinnerLabel, infoCon);
-			timeSpinnerLabel.setForeground(textColour);
-			timeSpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
-		}
-		if (squares[squareNum].getMaxMoney() > 0) {
-			moneyNumber = new JSpinner();
+			
+			
 			SpinnerNumberModel numSpin = new SpinnerNumberModel(0, 0,
 					squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 50);
 
@@ -876,13 +832,59 @@ public class Board extends JLayeredPane implements MouseListener {
 				}
 
 			});
+			spendMoney.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					moneyNumber.setValue(spendMoney.getValue());
+
+				}
+
+			});
+			
+			infoCon.insets = new Insets(10, 20, 20, 20);
+			infoCon.gridy = 4;
+			squareInfo.add(spendMoney, infoCon);
+			infoCon.gridwidth = 1;
+			infoCon.gridy = 3;
+			infoCon.fill = GridBagConstraints.NONE;
+			JLabel moneySpinnerLabel = new JLabel("Money:");
+			squareInfo.add(moneySpinnerLabel, infoCon);
+			moneySpinnerLabel.setForeground(textColour);
+			moneySpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+			
+			infoCon.gridx = 1;
+			infoCon.gridy = 3;
+			infoCon.anchor = GridBagConstraints.WEST;
+			infoCon.insets = new Insets(0, 0, 0, 0);
+			squareInfo.add(moneyNumber, infoCon);
+			
 		}
+
+		infoCon.fill = GridBagConstraints.HORIZONTAL;
+		spendTime = new JSlider(JSlider.HORIZONTAL, 0,squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 0);
+		timeNumber = new JSpinner();
+		
+		max = squares[squareNum].getMaxTime() - squares[squareNum].getTime();
+		
 		if (squares[squareNum].getMaxTime() > 0) {
-			timeNumber = new JSpinner();
+			
+			int spacing = max/4 - (max/4)%10 + 10;
+			
+			spendTime.setForeground(textColour);
+			spendTime.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
 
-			SpinnerNumberModel numSpin2 = new SpinnerNumberModel(0, 0,
-					squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 10);
+			spendTime.setMajorTickSpacing(spacing);
+			spendTime.setMinorTickSpacing(spacing/5);
+			spendTime.setPaintTicks(true);
+			spendTime.setPaintLabels(true);
+			
+			spendTime.setBackground(background);
+			
+			
 
+			SpinnerNumberModel numSpin2 = new SpinnerNumberModel(0, 0,squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 10);
+			
 			timeNumber.setModel(numSpin2);
 			numSpin2.addChangeListener(new ChangeListener() {
 
@@ -893,18 +895,38 @@ public class Board extends JLayeredPane implements MouseListener {
 				}
 
 			});
-		}
-		infoCon.gridx = 1;
-		infoCon.gridy = 3;
-		infoCon.anchor = GridBagConstraints.WEST;
-		infoCon.insets = new Insets(0, 0, 0, 0);
-		if (squares[squareNum].getMaxMoney() > 0) {
-			squareInfo.add(moneyNumber, infoCon);
-		}
-		infoCon.gridy = 5;
-		if (squares[squareNum].getMaxTime() > 0) {
+			spendTime.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					timeNumber.setValue(spendTime.getValue());
+
+				}
+
+			});
+			
+			
+			infoCon.insets = new Insets(10, 20, 20, 20);
+			infoCon.gridx = 0;
+			infoCon.gridwidth = 2;
+			infoCon.gridy = 6;
+			squareInfo.add(spendTime, infoCon);
+			infoCon.gridwidth = 1;
+			infoCon.gridy = 5;
+			infoCon.fill = GridBagConstraints.NONE;
+			JLabel timeSpinnerLabel = new JLabel("Time:");
+			squareInfo.add(timeSpinnerLabel, infoCon);
+			timeSpinnerLabel.setForeground(textColour);
+			timeSpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+			infoCon.gridx = 1;
+			infoCon.anchor = GridBagConstraints.WEST;
+
+			infoCon.insets = new Insets(0, 0, 0, 0);
 			squareInfo.add(timeNumber, infoCon);
 		}
+		
+
+		
 		JButton submitResources = new JButton("submitResources");
 		submitResources.setFocusPainted(false);
 		infoCon.gridx = 0;
@@ -917,12 +939,12 @@ public class Board extends JLayeredPane implements MouseListener {
 			public void actionPerformed(ActionEvent e) {
 				if (squares[squareNum].getMaxTime() > 0) {
 					if (squares[squareNum].getMaxMoney() > 0) {
-						gameController.spendResources(spendTime.getValue(), spendMoney.getValue());
+						gameController.spendResources(spendTime.getValue(), spendMoney.getValue(), squareNum);
 					} else {
-						gameController.spendResources(spendTime.getValue(), 0);
+						gameController.spendResources(spendTime.getValue(), 0, squareNum);
 					}
 				} else if (squares[squareNum].getMaxMoney() > 0) {
-					gameController.spendResources(0, spendMoney.getValue());
+					gameController.spendResources(0, spendMoney.getValue(), squareNum);
 				}
 
 			}
@@ -938,6 +960,8 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+
+	
 	public void changeColours(Color background, Color squares, Color text, Color border, boolean dark) {
 
 		int screenWidth = (int) squaresPanel.getSize().getWidth();
@@ -993,7 +1017,7 @@ public class Board extends JLayeredPane implements MouseListener {
 			redrawSquare(i);
 		}
 
-		int picWidth = (numOfSquares / 4 - 1) * SQUARE_WIDTH;
+		int picWidth = (numOfSquares / 4 - 1) * squareWidth;
 		if (!dark) {
 			title.setIcon(new ImageIcon(titles[0].getScaledInstance(picWidth, picWidth, Image.SCALE_FAST)));
 		} else {
@@ -1008,32 +1032,32 @@ public class Board extends JLayeredPane implements MouseListener {
 	private void redrawSquare(int squareNum) {
 		if (squareNum > 0 && squareNum < numOfSquares / 4) {
 			squareButtons[squareNum].setIcon(new ImageIcon(
-					createSquareImage(squareNum, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 1, (int) (SQUARE_WIDTH / 7.5))));
+					createSquareImage(squareNum, squareWidth, squareHeight, 1, (int) (squareWidth / 7.5))));
 		}
 		else if (squareNum > numOfSquares / 4 && squareNum < numOfSquares / 2) {
 			squareButtons[squareNum].setIcon(new ImageIcon(
-					createSquareImage(squareNum, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 2, (int) (SQUARE_WIDTH / 7.5))));
+					createSquareImage(squareNum, squareWidth, squareHeight, 2, (int) (squareWidth / 7.5))));
 		}
 		else if (squareNum > numOfSquares / 2 && squareNum < numOfSquares / 4 * 3) {
 			squareButtons[squareNum].setIcon(new ImageIcon(
-					createSquareImage(squareNum, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 3, (int) (SQUARE_WIDTH / 7.5))));
+					createSquareImage(squareNum, squareWidth, squareHeight, 3, (int) (squareWidth / 7.5))));
 		}
 		else if (squareNum > numOfSquares / 4 * 3 && squareNum < numOfSquares) {
 			squareButtons[squareNum].setIcon(new ImageIcon(
-					createSquareImage(squareNum, SQUARE_WIDTH, SQUARE_TOP_HEIGHT, 4, (int) (SQUARE_WIDTH / 7.5))));
+					createSquareImage(squareNum, squareWidth, squareHeight, 4, (int) (squareWidth / 7.5))));
 		}
 		else if (squareNum == 0) {
 		squareButtons[0].setIcon(new ImageIcon(
-				createSquareImage(0, SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 1, (int) (SQUARE_WIDTH / 6.25))));
+				createSquareImage(0, squareWidth + squareHeight, 0, 1, (int) (squareWidth / 6.25))));
 		}else if (squareNum == numOfSquares / 4) {
 		squareButtons[numOfSquares / 4].setIcon(new ImageIcon(createSquareImage(numOfSquares / 4,
-				SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 2, (int) (SQUARE_WIDTH / 6.25))));
+				squareWidth + squareHeight, 0, 2, (int) (squareWidth / 6.25))));
 		}else if (squareNum == numOfSquares / 2) {
 		squareButtons[numOfSquares / 2].setIcon(new ImageIcon(createSquareImage(numOfSquares / 2,
-				SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 3, (int) (SQUARE_WIDTH / 6.25))));
+				squareWidth + squareHeight, 0, 3, (int) (squareWidth / 6.25))));
 		}else if (squareNum == numOfSquares / 4 * 3) {
 		squareButtons[numOfSquares / 4 * 3].setIcon(new ImageIcon(createSquareImage(numOfSquares / 4 * 3,
-				SQUARE_WIDTH + SQUARE_TOP_HEIGHT, 0, 4, (int) (SQUARE_WIDTH / 6.25))));
+				squareWidth + squareHeight, 0, 4, (int) (squareWidth / 6.25))));
 		}
 		
 		
@@ -1048,30 +1072,30 @@ public class Board extends JLayeredPane implements MouseListener {
 		BufferedImage squareAnimationImages[] = new BufferedImage[numOfSquares];
 
 		for (int i = 1; i < numOfSquares / 4; i++) {
-			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH * zoom, SQUARE_TOP_HEIGHT * zoom, 1,
-					(int) (SQUARE_WIDTH / 7.5 * zoom));
+			squareAnimationImages[i] = createSquareImage(i, squareWidth * zoom, squareHeight * zoom, 1,
+					(int) (squareWidth / 7.5 * zoom));
 		}
 		for (int i = numOfSquares / 4 + 1; i < numOfSquares / 2; i++) {
-			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH * zoom, SQUARE_TOP_HEIGHT * zoom, 2,
-					(int) (SQUARE_WIDTH / 7.5 * zoom));
+			squareAnimationImages[i] = createSquareImage(i, squareWidth * zoom, squareHeight * zoom, 2,
+					(int) (squareWidth / 7.5 * zoom));
 		}
 		for (int i = numOfSquares / 2 + 1; i < numOfSquares / 4 * 3; i++) {
-			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH * zoom, SQUARE_TOP_HEIGHT * zoom, 3,
-					(int) (SQUARE_WIDTH / 7.5 * zoom));
+			squareAnimationImages[i] = createSquareImage(i, squareWidth * zoom, squareHeight * zoom, 3,
+					(int) (squareWidth / 7.5 * zoom));
 		}
 		for (int i = numOfSquares / 4 * 3 + 1; i < numOfSquares; i++) {
-			squareAnimationImages[i] = createSquareImage(i, SQUARE_WIDTH * zoom, SQUARE_TOP_HEIGHT * zoom, 4,
-					(int) (SQUARE_WIDTH / 7.5 * zoom));
+			squareAnimationImages[i] = createSquareImage(i, squareWidth * zoom, squareHeight * zoom, 4,
+					(int) (squareWidth / 7.5 * zoom));
 		}
 
-		squareAnimationImages[0] = createSquareImage(0, (SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom, 0, 1,
-				(int) ((int) (SQUARE_WIDTH / 6.25) * zoom));
+		squareAnimationImages[0] = createSquareImage(0, (squareWidth + squareHeight) * zoom, 0, 1,
+				(int) ((int) (squareWidth / 6.25) * zoom));
 		squareAnimationImages[numOfSquares / 4] = createSquareImage(numOfSquares / 4,
-				(SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom, 0, 2, (int) (SQUARE_WIDTH / 6.25 * zoom));
+				(squareWidth + squareHeight) * zoom, 0, 2, (int) (squareWidth / 6.25 * zoom));
 		squareAnimationImages[numOfSquares / 2] = createSquareImage(numOfSquares / 2,
-				(SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom, 0, 3, (int) (SQUARE_WIDTH / 6.25) * zoom);
+				(squareWidth + squareHeight) * zoom, 0, 3, (int) (squareWidth / 6.25) * zoom);
 		squareAnimationImages[numOfSquares / 4 * 3] = createSquareImage(numOfSquares / 4 * 3,
-				(SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom, 0, 4, (int) (SQUARE_WIDTH / 6.25 * zoom));
+				(squareWidth + squareHeight) * zoom, 0, 4, (int) (squareWidth / 6.25 * zoom));
 
 		Graphics2D sqImGraphics = null;
 		fullBoard = new BufferedImage(screenWidth * zoom, screenHeight * zoom, BufferedImage.TYPE_INT_ARGB);
@@ -1080,31 +1104,31 @@ public class Board extends JLayeredPane implements MouseListener {
 		int offsety = (screenHeight - boardWidth) / 2 * zoom;
 
 		sqImGraphics.drawImage(squareAnimationImages[0], null, offsetx, offsety);
-		offsetx += (SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom;
+		offsetx += (squareWidth + squareHeight) * zoom;
 		for (int i = 1; i < numOfSquares / 4; i++) {
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
-			offsetx += SQUARE_WIDTH * zoom;
+			offsetx += squareWidth * zoom;
 		}
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares / 4], null, offsetx, offsety);
-		offsety += (SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom;
+		offsety += (squareWidth + squareHeight) * zoom;
 		for (int i = numOfSquares / 4 + 1; i < numOfSquares / 2; i++) {
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
-			offsety += SQUARE_WIDTH * zoom;
+			offsety += squareWidth * zoom;
 		}
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares / 2], null, offsetx, offsety);
 		for (int i = numOfSquares / 2 + 1; i < numOfSquares / 4 * 3; i++) {
-			offsetx -= SQUARE_WIDTH * zoom;
+			offsetx -= squareWidth * zoom;
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
 		}
-		offsetx -= (SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom;
+		offsetx -= (squareWidth + squareHeight) * zoom;
 		sqImGraphics.drawImage(squareAnimationImages[numOfSquares / 4 * 3], null, offsetx, offsety);
 
 		for (int i = numOfSquares / 4 * 3 + 1; i < numOfSquares; i++) {
-			offsety -= SQUARE_WIDTH * zoom;
+			offsety -= squareWidth * zoom;
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
 		}
-		offsetx += (SQUARE_WIDTH + SQUARE_TOP_HEIGHT) * zoom;
-		int picWidth = (numOfSquares / 4 - 1) * SQUARE_WIDTH * zoom;
+		offsetx += (squareWidth + squareHeight) * zoom;
+		int picWidth = (numOfSquares / 4 - 1) * squareWidth * zoom;
 		if (!darkMode) {
 			sqImGraphics.drawImage(titles[0].getScaledInstance(picWidth, picWidth, Image.SCALE_FAST), offsetx, offsety,
 					null);
