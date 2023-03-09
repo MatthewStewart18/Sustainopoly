@@ -560,8 +560,10 @@ public class Board extends JLayeredPane implements MouseListener {
 		diceButton.setBackground(Color.BLUE);
 		diceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int[] finalDice = gameController.rollDice();
 				Timer rollDice = new Timer();
-				rollDice.scheduleAtFixedRate(new DiceRoller(), 0, 40);
+				if(finalDice != null)rollDice.scheduleAtFixedRate(new DiceRoller(finalDice), 0, 40);
+				
 
 			}
 		});
@@ -598,7 +600,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		infoPanel.setLayout(new GridBagLayout());
 		infoCon = new GridBagConstraints();
 
-		player = new JLabel("Player Name:");
+		player = new JLabel("Player Name: ");
 
 		infoCon.ipady = 5;
 		infoCon.ipadx = 60;
@@ -610,7 +612,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		infoPanel.add(player, infoCon);
 
-		money = new JLabel(" Money: �0.00");
+		money = new JLabel(" Money: 0");
 		infoCon.gridx = 2;
 		money.setOpaque(true);
 		infoPanel.add(money, infoCon);
@@ -788,113 +790,121 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		squareInfo.add(resourceSubmission, infoCon);
 
-		spendMoney = new JSlider(JSlider.HORIZONTAL, 0,
-				squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 0);
-		spendMoney.setForeground(textColour);
-		spendMoney.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+		if (squares[squareNum].getMaxMoney() > 0) {
+			spendMoney = new JSlider(JSlider.HORIZONTAL, 0,
+					squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 0);
+			spendMoney.setForeground(textColour);
+			spendMoney.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
 
-		spendMoney.setMajorTickSpacing(500);
-		spendMoney.setMinorTickSpacing(100);
-		spendMoney.setPaintTicks(true);
-		spendMoney.setPaintLabels(true);
-		spendMoney.addChangeListener(new ChangeListener() {
+			spendMoney.setMajorTickSpacing(500);
+			spendMoney.setMinorTickSpacing(100);
+			spendMoney.setPaintTicks(true);
+			spendMoney.setPaintLabels(true);
+			spendMoney.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				moneyNumber.setValue(spendMoney.getValue());
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					moneyNumber.setValue(spendMoney.getValue());
 
-			}
+				}
 
-		});
-		spendMoney.setBackground(background);
+			});
+			spendMoney.setBackground(background);
 
-		spendTime = new JSlider(JSlider.HORIZONTAL, 0, squares[squareNum].getMaxTime() - squares[squareNum].getTime(),
-				0);
-		spendTime.setForeground(textColour);
-		spendTime.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+		}
 
-		spendTime.setMajorTickSpacing(50);
-		spendTime.setMinorTickSpacing(10);
-		spendTime.setPaintTicks(true);
-		spendTime.setPaintLabels(true);
-		spendTime.addChangeListener(new ChangeListener() {
+		if (squares[squareNum].getMaxTime() > 0) {
+			spendTime = new JSlider(JSlider.HORIZONTAL, 0,
+					squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 0);
+			spendTime.setForeground(textColour);
+			spendTime.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				timeNumber.setValue(spendTime.getValue());
+			spendTime.setMajorTickSpacing(50);
+			spendTime.setMinorTickSpacing(10);
+			spendTime.setPaintTicks(true);
+			spendTime.setPaintLabels(true);
+			spendTime.addChangeListener(new ChangeListener() {
 
-			}
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					timeNumber.setValue(spendTime.getValue());
 
-		});
-		spendTime.setBackground(background);
+				}
 
+			});
+			spendTime.setBackground(background);
+		}
 		infoCon.gridy = 4;
 
 		infoCon.fill = GridBagConstraints.HORIZONTAL;
-
-		squareInfo.add(spendMoney, infoCon);
-
+		if (squares[squareNum].getMaxMoney() > 0) {
+			squareInfo.add(spendMoney, infoCon);
+		}
 		infoCon.gridy = 6;
-		squareInfo.add(spendTime, infoCon);
-
+		if (squares[squareNum].getMaxTime() > 0) {
+			squareInfo.add(spendTime, infoCon);
+		}
 		infoCon.gridwidth = 1;
 		infoCon.gridy = 3;
 		infoCon.fill = GridBagConstraints.NONE;
 
-		JLabel moneySpinnerLabel = new JLabel("Money:");
-		squareInfo.add(moneySpinnerLabel, infoCon);
-		moneySpinnerLabel.setForeground(textColour);
-		moneySpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
-
+		if (squares[squareNum].getMaxMoney() > 0) {
+			JLabel moneySpinnerLabel = new JLabel("Money:");
+			squareInfo.add(moneySpinnerLabel, infoCon);
+			moneySpinnerLabel.setForeground(textColour);
+			moneySpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+		}
 		infoCon.gridy = 5;
+		if (squares[squareNum].getMaxTime() > 0) {
+			JLabel timeSpinnerLabel = new JLabel("Time:");
+			squareInfo.add(timeSpinnerLabel, infoCon);
+			timeSpinnerLabel.setForeground(textColour);
+			timeSpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+		}
+		if (squares[squareNum].getMaxMoney() > 0) {
+			moneyNumber = new JSpinner();
+			SpinnerNumberModel numSpin = new SpinnerNumberModel(0, 0,
+					squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 50);
 
-		JLabel timeSpinnerLabel = new JLabel("Time:");
-		squareInfo.add(timeSpinnerLabel, infoCon);
-		timeSpinnerLabel.setForeground(textColour);
-		timeSpinnerLabel.setFont(new Font("Arial", Font.BOLD, screenWidth / 80));
+			moneyNumber.setModel(numSpin);
+			numSpin.addChangeListener(new ChangeListener() {
 
-		moneyNumber = new JSpinner();
-		SpinnerNumberModel numSpin = new SpinnerNumberModel(0, 0,
-				squares[squareNum].getMaxMoney() - squares[squareNum].getMoney(), 50);
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					spendMoney.setValue(numSpin.getNumber().intValue());
 
-		moneyNumber.setModel(numSpin);
-		numSpin.addChangeListener(new ChangeListener() {
+				}
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				spendMoney.setValue(numSpin.getNumber().intValue());
+			});
+		}
+		if (squares[squareNum].getMaxTime() > 0) {
+			timeNumber = new JSpinner();
 
-			}
+			SpinnerNumberModel numSpin2 = new SpinnerNumberModel(0, 0,
+					squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 10);
 
-		});
+			timeNumber.setModel(numSpin2);
+			numSpin2.addChangeListener(new ChangeListener() {
 
-		timeNumber = new JSpinner();
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					spendTime.setValue(numSpin2.getNumber().intValue());
 
-		SpinnerNumberModel numSpin2 = new SpinnerNumberModel(0, 0,
-				squares[squareNum].getMaxTime() - squares[squareNum].getTime(), 10);
+				}
 
-		timeNumber.setModel(numSpin2);
-		numSpin2.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				spendTime.setValue(numSpin2.getNumber().intValue());
-
-			}
-
-		});
-
+			});
+		}
 		infoCon.gridx = 1;
 		infoCon.gridy = 3;
 		infoCon.anchor = GridBagConstraints.WEST;
 		infoCon.insets = new Insets(0, 0, 0, 0);
-
-		squareInfo.add(moneyNumber, infoCon);
-
+		if (squares[squareNum].getMaxMoney() > 0) {
+			squareInfo.add(moneyNumber, infoCon);
+		}
 		infoCon.gridy = 5;
-
-		squareInfo.add(timeNumber, infoCon);
-
+		if (squares[squareNum].getMaxTime() > 0) {
+			squareInfo.add(timeNumber, infoCon);
+		}
 		JButton submitResources = new JButton("submitResources");
 		submitResources.setFocusPainted(false);
 		infoCon.gridx = 0;
@@ -905,6 +915,15 @@ public class Board extends JLayeredPane implements MouseListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (squares[squareNum].getMaxTime() > 0) {
+					if (squares[squareNum].getMaxMoney() > 0) {
+						gameController.spendResources(spendTime.getValue(), spendMoney.getValue());
+					} else {
+						gameController.spendResources(spendTime.getValue(), 0);
+					}
+				} else if (squares[squareNum].getMaxMoney() > 0) {
+					gameController.spendResources(0, spendMoney.getValue());
+				}
 
 			}
 
@@ -1211,13 +1230,13 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private class DiceRoller extends TimerTask {
 
-		public DiceRoller() {
+		public DiceRoller(int[] finalDice) {
 			super();
 
 			buttonsDisabled = true;
 			playerCanMove = false;
 			diceButton.setIcon(null);
-			int[] finalDice = gameController.rollDice();
+			
 
 			BufferedImage finalImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D sqImGraphics = null;

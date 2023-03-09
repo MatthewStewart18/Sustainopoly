@@ -34,7 +34,7 @@ public class Square {
 	}
 	
 	public int getMaxMoney() {
-		return 2000;
+		return 1000;
 	}
 	
 	public int getTime() {

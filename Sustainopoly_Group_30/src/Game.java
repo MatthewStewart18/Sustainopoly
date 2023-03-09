@@ -87,13 +87,19 @@ public class Game {
 	}
 	
 	public int[] rollDice() {
-		
-		int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
+		if(!canEndTurn) {
+			int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
 		
 		gameBoard.movePlayer(1, dice[0] + dice[1]);
 		
 		canEndTurn = true;
 		return dice;
+		}
+		else {
+			return null;
+		}
+		
+		
 		
 	}
 	
@@ -104,7 +110,15 @@ public class Game {
 	public void endTurn() {
 		if(canEndTurn) {
 			
+			
+			startTurn();
 		}
+	}
+	
+	public void spendResources(int time, int money) {
+		//if(player[curentPlayer].getTime < time){
+		gameBoard.displayMessage("You do not have enough time remaining");
+		//}
 	}
 
 }
