@@ -11,17 +11,18 @@ import java.awt.*;
 public class Game {
 	
 	private Board gameBoard;
-	
+	private Square[] squares;
+	private boolean canEndTurn = false;
 	
 	public Game(ArrayList<String[]> players, Display dis) {
 		String[] squareNames = {"New Week", "Temp", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Temp", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
-					Square[] sq = new Square[20];
+					squares = new Square[20];
 		
 					for(int i = 0; i < squareNames.length; i++) {
-							sq[i] = new Square(squareNames[i]);
+						squares[i] = new Square(squareNames[i]);
 					}
 		
-		gameBoard = new Board(sq, dis, createIcons(players));
+		gameBoard = new Board(squares, dis, createIcons(players), this);
 		
 	}
 	
@@ -76,6 +77,34 @@ public class Game {
 	
 	public Board getGameBoard() {
 		return gameBoard;
+	}
+	
+	
+	public void displaySquareInfo(int focusedSquare) {
+		
+		gameBoard.displaySquareInfoAndResources(focusedSquare);
+		
+	}
+	
+	public int[] rollDice() {
+		
+		int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
+		
+		gameBoard.movePlayer(1, dice[0] + dice[1]);
+		
+		canEndTurn = true;
+		return dice;
+		
+	}
+	
+	private void startTurn() {
+		canEndTurn = false;
+	}
+	
+	public void endTurn() {
+		if(canEndTurn) {
+			
+		}
 	}
 
 }
