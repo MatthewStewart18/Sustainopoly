@@ -82,6 +82,7 @@ public class DisplaySettings extends JPanel implements ActionListener{
 		
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
+		changeColours(background, foregroundColour, textColour, borderColour, darkMode);
 		repaint();
 	}
 

@@ -3,6 +3,7 @@ public class Square {
 	
 	protected int index;
 	protected final String name;
+	private int mon = 300;
 	
 	public Square(String name) {
 		this.name = name;
@@ -30,11 +31,14 @@ public class Square {
 	}
 	
 	public int getMoney() {
-		return 300;
+		return mon;
+	}
+	public void setMoney(int m) {
+		mon+=m;
 	}
 	
 	public int getMaxMoney() {
-		return 2000;
+		return 1000;
 	}
 	
 	public int getTime() {

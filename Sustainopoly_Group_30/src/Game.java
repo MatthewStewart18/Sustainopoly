@@ -13,8 +13,10 @@ public class Game {
 	private Board gameBoard;
 	private Square[] squares;
 	private boolean canEndTurn = false;
+	private Display display;
 	
 	public Game(ArrayList<String[]> players, Display dis) {
+		this.display = dis;
 		String[] squareNames = {"New Week", "Temp", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Temp", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
 					squares = new Square[20];
 		
@@ -87,13 +89,19 @@ public class Game {
 	}
 	
 	public int[] rollDice() {
-		
-		int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
+		if(!canEndTurn) {
+			int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
 		
 		gameBoard.movePlayer(1, dice[0] + dice[1]);
 		
 		canEndTurn = true;
 		return dice;
+		}
+		else {
+			return null;
+		}
+		
+		
 		
 	}
 	
@@ -104,7 +112,17 @@ public class Game {
 	public void endTurn() {
 		if(canEndTurn) {
 			
+			
+			startTurn();
 		}
+	}
+	
+	public void spendResources(int time, int money, int square) {
+		//if(player[curentPlayer].getTime < time){
+		//gameBoard.displayMessage("You do not have enough time remaining");
+		squares[square].setMoney(money);
+		gameBoard.zoomOut();
+		//}
 	}
 
 }
