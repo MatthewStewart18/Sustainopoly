@@ -10,17 +10,18 @@ import java.awt.*;
 
 public class Game {
 	
-	private Board3 gameBoard;
+	private Board gameBoard;
 	
 	
 	public Game(ArrayList<String[]> players, Display dis) {
+		String[] squareNames = {"New Week", "Temp", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Temp", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
 					Square[] sq = new Square[20];
 		
-					for(int i = 0; i < 20; i++) {
-							sq[i] = new Square();
+					for(int i = 0; i < squareNames.length; i++) {
+							sq[i] = new Square(squareNames[i]);
 					}
 		
-		gameBoard = new Board3(sq, dis, createIcons(players));
+		gameBoard = new Board(sq, dis, createIcons(players));
 		
 	}
 	
@@ -73,7 +74,7 @@ public class Game {
 		
 	}
 	
-	public Board3 getGameBoard() {
+	public Board getGameBoard() {
 		return gameBoard;
 	}
 

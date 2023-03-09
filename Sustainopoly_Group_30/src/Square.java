@@ -16,7 +16,7 @@ public class Square {
 	}
 	
 	public String getName() {
-		return "Advertisement";
+		return name;
 	}
 	
 	public Color getColour() {

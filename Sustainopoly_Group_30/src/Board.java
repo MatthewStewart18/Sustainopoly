@@ -17,7 +17,7 @@ import java.util.Timer;
 
 
 
-public class Board3 extends JLayeredPane implements MouseListener{
+public class Board extends JLayeredPane implements MouseListener{
 	
 	private Color background, foregroundColour, textColour, borderColour;
 	
@@ -79,7 +79,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	private int[] playerPositions;
 	private BufferedImage[] playerIcons;
 	
-	public Board3( Square[] squares,  Display display, BufferedImage[] playerIcons ) {
+	public Board( Square[] squares,  Display display, BufferedImage[] playerIcons ) {
 		this.display = display;
 		this.squares = squares;
 		this.playerIcons = playerIcons;
@@ -516,7 +516,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			public void actionPerformed(ActionEvent e)
 			{
 				Timer rollDice = new Timer();
-				rollDice.scheduleAtFixedRate(new DiceRoller(), 0, 40);
+				rollDice.scheduleAtFixedRate(new DiceRoller(2, 1), 0, 40);
 				
 			}
 		});
@@ -643,20 +643,15 @@ public class Board3 extends JLayeredPane implements MouseListener{
 	
 	
 	public void setPlayer(String playerName) {
-		
+		player.setText("Player Name: " + playerName);
 	}
 	
 	public void setMoney(double money) {
-		
+		this.money.setText("Money: " + money);
 	}
 	
 	public void setTime(int time) {
-		
-	}
-	
-	
-	public void setProgression(int progress) {
-		
+		this.time.setText("Time: " + time + "Hours");
 	}
 	
 	public void displaySquareInfo(int squareNum){
@@ -1145,22 +1140,22 @@ public class Board3 extends JLayeredPane implements MouseListener{
 
 	
 		
-		public DiceRoller() {
+		public DiceRoller(int dice1, int dice2) {
 			super();
 			
-			
+			disableButtons = true;
 			diceButton.setIcon(null);
 			//finalDice = game.rolldice();
 		
-			int[] finalDice = {2,6};
+			
 			
 			BufferedImage finalImage = new BufferedImage(960, 540, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D sqImGraphics = null;
 			sqImGraphics = finalImage.createGraphics();
 			
 			
-			sqImGraphics.drawImage(topDice[finalDice[0]-1], null, 0, 0);
-			sqImGraphics.drawImage(botDice[finalDice[1]-1], null, 0, 0);
+			sqImGraphics.drawImage(topDice[dice1-1], null, 0, 0);
+			sqImGraphics.drawImage(botDice[dice2-1], null, 0, 0);
 			
 			dicePics[59] = new ImageIcon(finalImage);
 			sqImGraphics.dispose();
@@ -1168,8 +1163,8 @@ public class Board3 extends JLayeredPane implements MouseListener{
 			backgroundDice = new BufferedImage(220, 140, BufferedImage.TYPE_INT_ARGB);
 			sqImGraphics = backgroundDice.createGraphics();
 			
-			sqImGraphics.drawImage(botDice[finalDice[0]-1], null, -310, -410);
-			sqImGraphics.drawImage(topDice[finalDice[1]-1], null, -210, -180);
+			sqImGraphics.drawImage(botDice[dice1-1], null, -310, -410);
+			sqImGraphics.drawImage(topDice[dice2-1], null, -210, -180);
 			
 			sqImGraphics.dispose();
 			
@@ -1198,6 +1193,7 @@ public class Board3 extends JLayeredPane implements MouseListener{
 				dice.setIcon(null);
 				diceButton.setIcon(new ImageIcon(backgroundDice));
 				repaint();
+				disableButtons = false;
 				//Game.movePlayer(int dice1, int dice2)
 				this.cancel();
 			}
