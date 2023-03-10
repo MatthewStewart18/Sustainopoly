@@ -635,7 +635,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!buttonsDisabled) {
+				if(!buttonsDisabled&& !isZoomed) {
 					gameController.endTurn();
 				}
 				
@@ -692,12 +692,12 @@ public class Board extends JLayeredPane implements MouseListener {
 		player.setText("Player Name: " + playerName);
 	}
 
-	public void setMoney(double money) {
+	public void setMoney(int money) {
 		this.money.setText("Money: " + money);
 	}
 
 	public void setTime(int time) {
-		this.time.setText("Time: " + time + "Hours");
+		this.time.setText("Time: " + time + " Hours");
 	}
 
 	public void displaySquareInfo(int squareNum) {

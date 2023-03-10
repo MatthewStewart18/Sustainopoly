@@ -1,12 +1,55 @@
 import java.awt.*;
+import java.io.File;  
+import java.io.FileNotFoundException; 
+import java.util.Scanner; 
 public class Square {
 	
 	protected int index;
 	protected final String name;
-	private int mon = 300;
+	private int maxMoney = 300;
+	private int maxTime = 0;
+	private int money = 300;
+	private int time = 0;
+	private String devArea = "Website";
+	private String info;
+	private String[] impact;
+	private Color header = Color.PINK;
+	
+	// website : Govanshare, 
+	
+	private int initialTimeInvest;
+	private int initialMoneyInvest;
 	
 	public Square(String name) {
 		this.name = name;
+		
+		String[] file = new String[9];
+		impact = new String[3];
+		try {
+			File squareFile = new File("squares//" + name + ".txt");
+			Scanner fileReader = new Scanner(squareFile);
+			for (int i = 0; i < 9; i++) {
+				file[i] = fileReader.nextLine();
+			}
+			fileReader.close();
+			
+			this.maxMoney = Integer.parseInt(file[0]);
+			this.maxTime = Integer.parseInt(file[1]);
+			this.initialMoneyInvest = Integer.parseInt(file[2]);
+			this.initialTimeInvest = Integer.parseInt(file[3]);
+			this.info = file[4];
+			this.impact[0] = file[5];
+			this.impact[1] = file[6];
+			this.impact[2] = file[7];
+			this.devArea = file[8];
+
+		} catch (FileNotFoundException e) {
+		}
+		
+		if(devArea.equals("Lobbying")) {
+			header = Color.BLUE;
+		}
+		
 	}
 	
 	public void doAction(Player currentPlayer) {
@@ -21,32 +64,61 @@ public class Square {
 	}
 	
 	public Color getColour() {
-		return Color.PINK;
+		return header;
 	}
 	
 	public String getInfo() {
 		
-		return "blahhhh blahhh blahhhhhhhhhhhhhhhhhhhhhh blahhhhhhhhhhh";
+		return this.info;
 		
 	}
 	
 	public int getMoney() {
-		return mon;
+		return money;
 	}
 	public void setMoney(int m) {
-		mon+=m;
+		money+=m;
 	}
 	
 	public int getMaxMoney() {
-		return 1000;
+		return maxMoney;
 	}
 	
 	public int getTime() {
-		return 20;
+		return time;
 	}
 	
 	public int getMaxTime() {
-		return 150;
+		return maxTime;
 	}
+
+	public void setTime(int time) {
+		this.time += time;
+		
+	}
+	
+	public String getImpact() {
+		int num = (int) (Math.random()*3);
+		
+		return this.impact[num];
+	}
+	
+	public String getDevArea() {
+		return devArea;
+	}
+	
+	public int getInitialTimeInvestment() {
+		return initialTimeInvest;
+		
+		
+	}
+	
+	public int getInitialMoneyInvestment() {
+		return initialMoneyInvest;
+		
+		
+	}
+	
+	
 
 }
