@@ -8,15 +8,13 @@ public class Player {
     private int position;
     private int playerTime;
     private int playerMoney = 1500;
+	private final playerID;
 
-    public Player(String name) {
+    public Player(String name, int playerID) {
         this.playerName = name;
+		this.playerID = playerID;
         position = 0;
-    }
-
-	/*
-	 * public void setName(String name) { this.playerName = name; }
-	 */
+	}
 
     public String getName() {
         return playerName;
@@ -82,16 +80,10 @@ public class Player {
     		System.out.println(investment);
     	}
     }
-    
 
-	/*
-	 * public void setPLayerID(int ID) { if(playerID > 8) { this.playerID = ID;
-	 * }else { System.out.println("maximum number of players"); }
-	 * 
-	 * }
-	 * 
-	 * public int getPlayerID() { return playerID; }
-	 */
+	  
+	  public int getPlayerID() { return playerID; }
+	 
 
 
 }
