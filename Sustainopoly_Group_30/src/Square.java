@@ -14,11 +14,12 @@ public class Square {
 	private String info;
 	private String[] impact;
 	private Color header = Color.PINK;
+	private int taskLeader = -1;
 	
 	// website : Govanshare, 
 	
-	private int initialTimeInvest;
-	private int initialMoneyInvest;
+	private int initialTimeInvest = 10;
+	private int initialMoneyInvest = 100;
 	
 	public Square(String name) {
 		this.name = name;
@@ -119,6 +120,13 @@ public class Square {
 		
 	}
 	
+	public void setTaskLeader(int player) {
+		this.taskLeader = player;
+	}
 	
+	public int getTaskLeader() {
+		return taskLeader;
+		
+	}
 
 }

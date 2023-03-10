@@ -6,7 +6,7 @@ public class Player {
 	private final String playerName;
 	private int position;
 	private int playerTime = 40;
-	private int playerMoney = 0;
+	private int playerMoney = 1500;
 	private final int playerID;
 
 	public Player(String name, int playerID) {
