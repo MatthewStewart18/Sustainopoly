@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 public class Game {
@@ -14,6 +16,8 @@ public class Game {
 	private Square[] squares;
 	private boolean canEndTurn = false;
 	private Display display;
+	private Player[] players;
+	private int currentPlayer = 0;
 	
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
@@ -26,6 +30,13 @@ public class Game {
 		
 		gameBoard = new Board(squares, dis, createIcons(players), this);
 		
+		this.players = new Player[players.size()];
+		for(int i = 0; i < players.size();i++) {
+			this.players[i] = new Player(players.get(i)[0], i+1);
+		}
+		
+		
+		startTurn();
 	}
 	
 	/**
@@ -84,15 +95,96 @@ public class Game {
 	
 	public void displaySquareInfo(int focusedSquare) {
 		
-		gameBoard.displaySquareInfoAndResources(focusedSquare);
+		gameBoard.displaySquareInfo(focusedSquare);
 		
+		if (players[currentPlayer].getPosition() == focusedSquare) {
+			if(squares[focusedSquare].getTaskLeader() >= 0) {
+				gameBoard.displaySquareInfoAndResources(focusedSquare);
+			}
+			else if (squares[focusedSquare].getTaskLeader() == -1) {
+
+				int initMoney = squares[focusedSquare].getInitialMoneyInvestment();
+				int initTime = squares[focusedSquare].getInitialTimeInvestment();
+				String message = null;
+				if (initMoney > 0) {
+					if (initTime > 0) {
+						message = " to become task leader and start this task you must spend " + initTime + " hours and " + initMoney + " pounds";
+					} else {
+						message = " to become task leader and start this task you must spend " + initMoney + " pounds";
+					}
+				} else if (initTime > 0) {
+					message = " to become task leader and start this task you must spend " + initTime + " hours";
+				}
+				makeNewTaskLeader(currentPlayer, players.length,  focusedSquare,  message);
+			} else {
+				gameBoard.displaySquareInfo(focusedSquare);
+			}
+		} else if(squares[focusedSquare].getTaskLeader() == currentPlayer) {
+			gameBoard.displaySquareInfoAndResources(focusedSquare);
+		} else {
+			gameBoard.displaySquareInfo(focusedSquare);
+		}
+		
+		gameBoard.repaint();
+		gameBoard.revalidate();
+		
+	}
+	
+	private void makeNewTaskLeader(int player, int playersLeft, int squareNum, String message) {
+		
+		if(playersLeft == 0) return;
+		int initMoney = squares[squareNum].getInitialMoneyInvestment();
+		int initTime = squares[squareNum].getInitialTimeInvestment();
+		ActionListener no = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				gameBoard.removeConfirmationPanel();
+				if(player == players.length-1) makeNewTaskLeader(0, playersLeft-1,  squareNum,  message);
+				else makeNewTaskLeader(player + 1, playersLeft-1,  squareNum,  message);
+				gameBoard.zoomOut();
+				
+			}
+			
+		};
+
+		if (players[player].getMoney() >= initMoney) {
+
+			if (players[player].getTime() >= initTime) {
+				
+				gameBoard.getConfirmation(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						players[player].addMoney(-initMoney);
+						gameBoard.setMoney(players[player].getMoney());
+						players[player].addTime(-initTime);
+						gameBoard.setTime(players[player].getTime());
+						gameBoard.removeConfirmationPanel();
+						squares[squareNum].setTaskLeader(player);
+						gameBoard.zoomOut();
+					}
+
+				}, no, players[player].getName() + message);
+			} else {
+				gameBoard.displayMessage(no, players[player].getName() + " does not have enough time to start this task");
+			}
+
+		} else {
+			gameBoard.displayMessage(no, players[player].getName() + " does not have enough money to start this task");
+		}
+
 	}
 	
 	public int[] rollDice() {
 		if(!canEndTurn) {
 			int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
 		
-		gameBoard.movePlayer(1, dice[0] + dice[1]);
+			dice[0] = 1;
+			dice[1] = 2;
+			
+		players[currentPlayer].move(dice[0] + dice[1], gameBoard);
 		
 		canEndTurn = true;
 		return dice;
@@ -107,22 +199,66 @@ public class Game {
 	
 	private void startTurn() {
 		canEndTurn = false;
+		
+		gameBoard.setPlayer(players[currentPlayer].getName());
+		gameBoard.setMoney(players[currentPlayer].getMoney());
+		gameBoard.setTime(players[currentPlayer].getTime());
 	}
 	
 	public void endTurn() {
 		if(canEndTurn) {
 			
+			if(players[currentPlayer].getMoney() < 0) {
+				display.openEndScreen(false);
+			}
+			
+			currentPlayer++;
+			if(currentPlayer >= players.length) {
+				currentPlayer = 0;
+			}
 			
 			startTurn();
 		}
 	}
 	
 	public void spendResources(int time, int money, int square) {
-		//if(player[curentPlayer].getTime < time){
-		//gameBoard.displayMessage("You do not have enough time remaining");
-		squares[square].setMoney(money);
-		gameBoard.zoomOut();
-		//}
-	}
+		if (players[currentPlayer].getTime() < time) {
+			gameBoard.displayMessage(null, "You do not have enough time remaining");
 
+		} else if (players[currentPlayer].getMoney() < money) {
+			gameBoard.displayMessage(null, "You do not have enough money remaining");
+
+		}else {
+			
+			if(money > 0 && time > 0) {
+				squares[square].setMoney(money);
+				players[currentPlayer].addMoney(-money);
+				gameBoard.setMoney(players[currentPlayer].getMoney());
+				squares[square].setTime(time);
+				players[currentPlayer].addTime(-time);
+				gameBoard.setTime(players[currentPlayer].getTime());
+				gameBoard.displayMessage(null, "You have invested "+ money +" pounds and " + time +" hours in " + squares[square].getName() + squares[square].getImpact());
+			}
+			else if(money > 0) {
+				squares[square].setMoney(money);
+				players[currentPlayer].addMoney(-money);
+				gameBoard.setMoney(players[currentPlayer].getMoney());
+				gameBoard.displayMessage(null, "You have invested "+ money +" pounds in " + squares[square].getName() + squares[square].getImpact());
+			}
+			
+			else if(time > 0) {
+				squares[square].setTime(time);
+				players[currentPlayer].addTime(-time);
+				gameBoard.setTime(players[currentPlayer].getTime());
+				gameBoard.displayMessage(null, "You have invested "  + time +" hours in " + squares[square].getName() + squares[square].getImpact());
+			}
+			
+			gameBoard.zoomOut();
+			
+			for(int i = 0; i< squares.length; i++) {
+				
+			}
+		}
+		
+	}
 }

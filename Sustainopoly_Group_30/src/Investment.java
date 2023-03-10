@@ -1,12 +1,13 @@
 import java.lang.reflect.Array;
 
-public abstract class Investment extends Square {
+public abstract class Investment {
 	private final int price;
 	private final int time;
 	protected Player partner;
+	private String name;
 	
 	public Investment(String name, int price, int time) {
-		super(name);
+		this.name = name;
 		this.price = price;
 		this.time = time;
 	}
@@ -24,15 +25,7 @@ public abstract class Investment extends Square {
 		partner = newPartner;
 	}
 	
-	
-	public void investOffer(Player currentPlayer) {
-		System.out.println("Would you like to invest in " + name);
-		String decision = Input.read().toLowerCase();
-		
-		if(decision.contains("y")) {
-			invested(currentPlayer);
-		}
-	}
+
 	
 	public void invested(Player currentPlayer) {
 		partner = currentPlayer;
@@ -43,7 +36,7 @@ public abstract class Investment extends Square {
 public void doAction(Player currentPlayer) {
 	if(currentPlayer == partner);
 	else {
-		investOffer(currentPlayer);
+		
 	}
 }
 }

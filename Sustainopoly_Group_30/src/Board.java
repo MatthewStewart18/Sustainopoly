@@ -27,7 +27,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private JMenu menu;
 
-	private JPanel squaresPanel, infoPanel, confirm, back, overlay, animationPanel, backgroundPanel, squareInfo;
+	private JPanel squaresPanel, infoPanel, confirm, message , overlay, animationPanel, backgroundPanel, squareInfo;
 
 	private int squareWidth = 150;
 	private int squareHeight = 50;
@@ -223,7 +223,7 @@ public class Board extends JLayeredPane implements MouseListener {
 						display.returnToMainMenu();
 						removeConfirmationPanel();
 					}
-				}, "Are you sure you want to exit\nYou will lose all your progress");
+				},null, "Are you sure you want to exit\nYou will lose all your progress");
 			}
 		});
 		exit.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -247,7 +247,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.anchor = GridBagConstraints.CENTER;
 	}
 
-	public void getConfirmation(ActionListener output, String messageText) {
+	public void getConfirmation(ActionListener outputYes, ActionListener outputNo, String messageText) {
 
 		disableButtons(true);
 
@@ -275,17 +275,22 @@ public class Board extends JLayeredPane implements MouseListener {
 		confirm.add(message);
 
 		JButton yes = new JButton("yes");
-		yes.addActionListener(output);
+		yes.addActionListener(outputYes);
 		yes.setFont(new Font("Arial", Font.PLAIN, 30));
 		yes.setBackground(foregroundColour);
 		yes.setForeground(textColour);
 
 		JButton no = new JButton("no");
-		no.addActionListener(new ActionListener() {
+		if(outputNo == null) {
+			no.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeConfirmationPanel();
 			}
 		});
+		}else {
+			no.addActionListener(outputNo);
+		}
+		
 		no.setFont(new Font("Arial", Font.PLAIN, 30));
 		no.setBackground(foregroundColour);
 		no.setForeground(textColour);
@@ -313,13 +318,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.gridy = 0;
 		overlay.add(confirm, squarePanelCon);
 
-		back = new JPanel();
-		back.setBackground(new Color(165, 165, 165, 200));
-
-		squarePanelCon.fill = GridBagConstraints.BOTH;
-
-		back.setOpaque(true);
-		overlay.add(back, squarePanelCon);
+		
 
 		repaint();
 		revalidate();
@@ -327,16 +326,16 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	public void removeConfirmationPanel() {
 		disableButtons(false);
-		overlay.remove(confirm);
-		overlay.remove(back);
+		if(confirm != null)overlay.remove(confirm);
+		if(message != null)overlay.remove(message);
 		repaint();
 		revalidate();
 	}
 	
-	public void displayMessage(String messageText) {
+	public void displayMessage(ActionListener outputContinue, String messageText) {
 		disableButtons(true);
 
-		JPanel message = new JPanel() {
+		message = new JPanel() {
 			public void paint(Graphics g) {
 		
 			Graphics2D sqImGraphics = (Graphics2D) g;
@@ -371,19 +370,23 @@ public class Board extends JLayeredPane implements MouseListener {
 		
 
 		JButton ok = new JButton("Continue");
-		ok.addActionListener(new ActionListener() {
+		if (outputContinue == null) {
+			ok.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				overlay.remove(message);
-				disableButtons(false);
-				playerCanMove = true;
-				repaint();
-				revalidate();
-			}
-			
-		});
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					overlay.remove(message);
+					disableButtons(false);
+					playerCanMove = true;
+					repaint();
+					revalidate();
+				}
+
+			});
+		} else {
+			ok.addActionListener(outputContinue);
+		}
+		
 		ok.setFont(new Font("Arial", Font.PLAIN, 30));
 		ok.setBackground(foregroundColour);
 		ok.setForeground(textColour);
@@ -635,7 +638,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!buttonsDisabled) {
+				if(!buttonsDisabled&& !isZoomed) {
 					gameController.endTurn();
 				}
 				
@@ -692,12 +695,12 @@ public class Board extends JLayeredPane implements MouseListener {
 		player.setText("Player Name: " + playerName);
 	}
 
-	public void setMoney(double money) {
+	public void setMoney(int money) {
 		this.money.setText("Money: " + money);
 	}
 
 	public void setTime(int time) {
-		this.time.setText("Time: " + time + "Hours");
+		this.time.setText("Time: " + time + " Hours");
 	}
 
 	public void displaySquareInfo(int squareNum) {
@@ -1229,7 +1232,7 @@ public class Board extends JLayeredPane implements MouseListener {
 				
 				if(position == numOfSquares) {
 					playerCanMove = false;
-					displayMessage("You Have Started A new Week");
+					displayMessage(null, "You Have Started A new Week");
 					position = 0;
 				}
 				
