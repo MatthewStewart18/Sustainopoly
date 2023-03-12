@@ -1,24 +1,15 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
+import java.awt.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
+import java.util.ArrayList;
 
 public class EndScreen extends JPanel{
 	
@@ -34,9 +25,13 @@ public class EndScreen extends JPanel{
 	private int screenWidth;
 	private int screenHeight;
 	
-	public EndScreen(Display display, boolean win) {
+	private Player[] players;
+	
+	int currentText = 0;
+	
+	public EndScreen(Display display, boolean win, Player[] players) {
 		this.display = display;
-		
+		this.players = players;
 		//sets the layout manager of the panel to be GridBag
 		setLayout(new GridBagLayout());
 		GridBagConstraints gridCon = new GridBagConstraints();
@@ -97,6 +92,7 @@ public class EndScreen extends JPanel{
 	}
 	
 	private JPanel setUpInfo() {
+		
 		JPanel mainPanel = new JPanel() {
 			/**
 			 * {@inheritDoc}
@@ -104,9 +100,8 @@ public class EndScreen extends JPanel{
 			 */
 			 @Override
 			public void paint(Graphics g) {
-				setMinimumSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
-				setPreferredSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
-				setMaximumSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
+				setMinimumSize(new Dimension((int) (screenWidth/2), (int) (screenHeight/5*3)));
+				setPreferredSize(new Dimension((int) (screenWidth/2), (int) (screenHeight/5*3)));
 				Graphics2D sqImGraphics = (Graphics2D) g;
 				sqImGraphics.setColor(foregroundColour);
 				sqImGraphics.fillRoundRect(5,5, this.getWidth()-10, this.getHeight()-10, 30,30);
@@ -120,56 +115,128 @@ public class EndScreen extends JPanel{
 		
 		mainPanel.setOpaque(false);
 		
+		//sets the layout manager of the panel to be GridBag
 		mainPanel.setLayout(new GridBagLayout());
 		GridBagConstraints gridCon = new GridBagConstraints();
 		
 		
-		JTextPane info = new JTextPane(){
-			/**
-			 * {@inheritDoc}
-			 * overrides the paint method to make sure the panel is the correct size
-			 */
-			 @Override
+		
+		ArrayList<String> infoText = new ArrayList();
+		infoText.add("2023:");
+		infoText.add("2024:");
+		infoText.add("2025:");
+		infoText.add("2026:");
+		infoText.add("2030:");
+		
+		for(int i = 0; i < players.length; i++) {
+			infoText.add(players[i].getName());
+		}
+		
+		
+		JTextPane description = new JTextPane() {
 			public void paint(Graphics g) {
-				setMinimumSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
-				setPreferredSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
-				setFont(new Font("Arial", Font.BOLD, (int) (screenWidth / 75)));
+				setMinimumSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/5*2)));
+				setPreferredSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/5*2)));
+				setFont(new Font("Arial", Font.BOLD, (int) (screenWidth / 50)));
+				setText(infoText.get(currentText));
+				this.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
+				setForeground(textColour);
 				super.paint(g);
 			}
-			
 		};
+
 		SimpleAttributeSet centre = new SimpleAttributeSet();
 		StyleConstants.setAlignment(centre, StyleConstants.ALIGN_CENTER);
-		info.setParagraphAttributes(centre, false);
-
-		info.setText("IN 2022: \n\n\n\n\n\n\nIN 2023: \n\n\n\n\n\n\nIN 2024: \n\n\n\n\n\n\nIN 2025: \n\n\n\n\n\n\nIN 2026: \n\n\n\n\n\n\nIN 2027: \n\n\n\n\n\n\nIN 2028: \n\n\n\n\n\n\n"
-				+ "IN 2029: \n\n\n\n\n\n\nIN 2030: \n\n\n\n\n\n\nIN 2031: \n\n\n\n\n\n\nIN 2032: \n\n\n\n\n\n\nIN 2033: \n\n\n\n\n\n\n");
-		info.setForeground(textColour);
-		info.setEditable(false);
-		info.setOpaque(false);
-
-		JScrollPane scrollInfo = new JScrollPane(info){
-			/**
-			 * {@inheritDoc}
-			 * overrides the paint method to make sure the panel is the correct size
-			 */
-			 @Override
+		description.setParagraphAttributes(centre, false);
+		description.setEditable(false);
+		description.setOpaque(false);
+		
+		
+		
+		JButton next = new JButton("NEXT"){
+			//override the paint method keep the correct text colour and size
 			public void paint(Graphics g) {
-				setMinimumSize(new Dimension((int) (screenWidth/4), (int) (screenHeight/3)));
-				setPreferredSize(new Dimension((int) (screenWidth/4), (int) (screenHeight/3)));
-				setMaximumSize(new Dimension((int) (screenWidth/4), (int) (screenHeight/3)));
-				
+				this.setForeground(textColour);
+				this.setFont( new Font("Arial", Font.BOLD, screenWidth/70));
+				this.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
+				this.setBackground(foregroundColour);
 				super.paint(g);
 			}
 			
 		};
-		scrollInfo.setOpaque(false);
-		scrollInfo.setBorder(null);
-		scrollInfo.getViewport().setOpaque(false);
-		scrollInfo.getViewport().setBorder(null);
-		scrollInfo.setPreferredSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/2)));
 		
-		mainPanel.add(info, gridCon);
+		next.setFocusPainted(false);
+		
+		next.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(currentText < infoText.size()-1) {
+					currentText++;
+				}
+			}
+		});
+		
+		JButton back = new JButton("BACK"){
+			//override the paint method keep the correct text colour and size
+			public void paint(Graphics g) {
+				this.setForeground(textColour);
+				this.setFont( new Font("Arial", Font.BOLD, screenWidth/70));
+				this.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
+				this.setBackground(foregroundColour);
+				super.paint(g);
+			}
+			
+		};
+		
+		back.setFocusPainted(false);
+		
+		back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(currentText > 0) {
+					currentText--;
+				}
+			}
+		});
+		
+		
+		JButton close = new JButton("CLOSE"){
+			//override the paint method keep the correct text colour and size
+			public void paint(Graphics g) {
+				this.setForeground(textColour);
+				this.setFont( new Font("Arial", Font.BOLD, screenWidth/70));
+				this.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
+				this.setBackground(foregroundColour);
+				super.paint(g);
+			}
+			
+		};
+		
+		close.setFocusPainted(false);
+		
+		close.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				display.returnToMainMenu();
+			}
+		});
+		
+		gridCon.gridx = 1;
+		gridCon.insets = new Insets(5, 5, 5, 5);
+		
+		gridCon.gridy = 1;
+		mainPanel.add(description, gridCon);
+		
+		gridCon.gridy = 2;
+		gridCon.anchor = GridBagConstraints.WEST;
+		mainPanel.add(back, gridCon);
+		gridCon.anchor = GridBagConstraints.EAST;
+		mainPanel.add(next, gridCon);
+		
+		
+		gridCon.gridy = 3;
+		gridCon.insets = new Insets(20, 20, 20, 20);
+		mainPanel.add(close, gridCon);
 		
 		
 		return mainPanel;

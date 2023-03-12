@@ -72,13 +72,14 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private int[] playerPositions;
 	private BufferedImage[] playerIcons;
+	JProgressBar bar;
 
-	public Board(Square[] squares, Display display, BufferedImage[] playerIcons, Game gameController) {
+	public Board(Square[] squares, Display display, BufferedImage[] playerIcons, Game gameController, JProgressBar bar) {
 		this.display = display;
 		this.squares = squares;
 		this.playerIcons = playerIcons;
 		this.gameController = gameController;
-		
+		this.bar = bar;
 		
 		playerPositions = new int[playerIcons.length];
 		for (int i = 0; i < playerIcons.length; i++)
@@ -249,6 +250,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	public void getConfirmation(ActionListener outputYes, ActionListener outputNo, String messageText) {
 
+		
 		disableButtons(true);
 
 		confirm = new JPanel() {
@@ -614,6 +616,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		infoCon.gridx = 1;
 		infoCon.gridy = 0;
 		infoCon.insets = new Insets(10, 10, 10, 10);
+		infoCon.anchor = GridBagConstraints.NORTH;
 
 		player.setOpaque(true);
 
@@ -654,6 +657,23 @@ public class Board extends JLayeredPane implements MouseListener {
 		infoCon.insets = new Insets(10, 10, 50, 30);
 		infoCon.anchor = GridBagConstraints.SOUTHEAST;
 		infoPanel.add(endTurn, infoCon);
+		
+		infoCon.insets = new Insets(5, 10, 0, 0);
+		infoCon.anchor = GridBagConstraints.NORTHWEST;
+		infoCon.gridx = 0;
+		infoCon.gridy = 1;
+		infoPanel.add(bar, infoCon);
+		JLabel progressLabel = new JLabel("Progress Bar:") {
+			public void paint(Graphics g) {
+				setFont(new Font("Arial", Font.BOLD, screenWidth / 70));
+				setForeground(textColour);
+				setBackground(foregroundColour);
+				super.paint(g);
+			}
+		};
+		infoCon.gridy = 0;
+		infoPanel.add(progressLabel, infoCon);
+		
 
 		JLabel spacer1 = new JLabel();
 		JLabel spacer2 = new JLabel();
@@ -967,8 +987,7 @@ public class Board extends JLayeredPane implements MouseListener {
 	
 	public void changeColours(Color background, Color squares, Color text, Color border, boolean dark) {
 
-		int screenWidth = (int) squaresPanel.getSize().getWidth();
-		int screenHeight = (int) squaresPanel.getSize().getHeight();
+		
 
 		this.background = background;
 		this.foregroundColour = squares;
@@ -976,6 +995,10 @@ public class Board extends JLayeredPane implements MouseListener {
 		this.borderColour = border;
 		this.darkMode = dark;
 		this.setBackground(background);
+		bar.setBackground(squares);
+		bar.setForeground(text);
+		bar.setPreferredSize(new Dimension(screenWidth/6,screenHeight/20));
+		bar.setFont(new Font("Arial", Font.BOLD, screenWidth / 70));
 
 		backgroundJLabel.setIcon(new ImageIcon(backgroundPict));
 		this.setOpaque(true);
