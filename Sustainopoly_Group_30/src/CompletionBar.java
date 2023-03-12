@@ -24,15 +24,9 @@ public class CompletionBar {
 	CompletionBar() {
 		
 		bar.setValue(0);
-		bar.setBounds(0,0,420,50);
+		bar.setBounds(0,0,700,100);
+		
 		bar.setStringPainted(true);
-		
-		frame.add(bar);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(420, 420);
-		frame.setLayout(null);
-		frame.setVisible(true);
-		
 		
 	}
 	
@@ -57,18 +51,11 @@ public class CompletionBar {
 //				completionDone = true;
 }
 	
-	public static void main(String[] args) {
+	public JProgressBar getBar() {
+		return bar;
 		
-		SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                CompletionBar game = new CompletionBar();
-                // frame.setVisible(true);
-
-                // Simulate some donations
-                game.progress(1000);
-                game.progress(1000);
-            }
-        });
 	}
+	
+	
 
 }

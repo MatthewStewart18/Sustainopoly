@@ -2,12 +2,10 @@
 
 import java.awt.*;
 
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 
 
@@ -91,14 +89,19 @@ public class Display extends JFrame{
 	 * if the panel is not null then resizes it so that it fills the window size
 	 */
 	private void resize() {
+		
+		Dimension screenSize;
+		if(fullScreen) screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		else screenSize = getSize();
+		
 		if (GB != null) {
-			GB.resize(getBounds().getSize().width, getBounds().getSize().height);//resizes the Board
+			GB.resize(screenSize.width, screenSize.height);//resizes the Board
 		}
 		if (gameStartMenu != null) {
-			gameStartMenu.resize(getBounds().getSize().width, getBounds().getSize().height);//resizes the start menu
+			gameStartMenu.resize(screenSize.width, screenSize.height);//resizes the start menu
 		}
-		displaySettings.resize(getBounds().getSize().width, getBounds().getSize().height);
-		rulesPanel.resize(getBounds().getSize().width, getBounds().getSize().height);
+		displaySettings.resize(screenSize.width, screenSize.height);
+		rulesPanel.resize(screenSize.width, screenSize.height);
 	}
 
 	/**
@@ -122,16 +125,15 @@ public class Display extends JFrame{
 	 * @param full - whether the screen should be set to borderless or not
 	 */
 	public void setFullScreen(boolean full) {
-		
+		fullScreen = full;
 		dispose();//removes the window
 		setUndecorated(full);//sets whether or not to have no border
 		if(full) {//if set to full screen make the window take up the entire screen
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 		}
-		fullScreen = full;
 		pack();//puts the panels in the correct positions
 		setVisible(true);//makes the window visible again
-
+		setLocation(0,0);
 	}
 
 	/**
@@ -177,8 +179,8 @@ public class Display extends JFrame{
 	/**creates the end screen
 	 * changes the panel shown to be the end screen panel
 	 */
-	public void openEndScreen(boolean win) {
-		EndScreen endS = new EndScreen(this, win);
+	public void openEndScreen(boolean win, Player[] players) {
+		EndScreen endS = new EndScreen(this, win, players);
 		add(endS, "endScreen");
 		endS.resize(getBounds().getSize().width, getBounds().getSize().height);
 		endS.changeColours(background, foregroundColour, textColour, borderColour, darkMode);

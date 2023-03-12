@@ -144,6 +144,7 @@ public class StartMenu extends JPanel {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				start.setVisible(false);
 				border.setVisible(true);
 			}
@@ -159,7 +160,8 @@ public class StartMenu extends JPanel {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				display.openRules();
+				
+				//display.openRules();
 			}
 			
 		}));

@@ -18,6 +18,7 @@ public class Game {
 	private Display display;
 	private Player[] players;
 	private int currentPlayer = 0;
+	CompletionBar bar;
 	
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
@@ -27,8 +28,15 @@ public class Game {
 					for(int i = 0; i < squareNames.length; i++) {
 						squares[i] = new Square(squareNames[i]);
 					}
+		int totalNeeded = 0;
 		
-		gameBoard = new Board(squares, dis, createIcons(players), this);
+		for(int i = 0; i < squareNames.length; i++) {
+			totalNeeded +=squares[i].getMaxMoney();
+			totalNeeded +=squares[i].getMaxTime();
+		}
+		bar = new CompletionBar();
+		
+		gameBoard = new Board(squares, dis, createIcons(players), this, bar.getBar());
 		
 		this.players = new Player[players.size()];
 		for(int i = 0; i < players.size();i++) {
@@ -207,9 +215,9 @@ public class Game {
 	
 	public void endTurn() {
 		if(canEndTurn) {
-			
+			display.openEndScreen(true, players);
 			if(players[currentPlayer].getMoney() < 0) {
-				display.openEndScreen(false);
+				display.openEndScreen(false, players);
 			}
 			
 			currentPlayer++;
@@ -258,6 +266,28 @@ public class Game {
 			for(int i = 0; i< squares.length; i++) {
 				
 			}
+			bar.progress(money + time); 
+		}
+		
+		boolean devAreaFinished = true;
+		String devArea = squares[square].getDevArea();
+		
+		for(int i = 0; i< squares.length; i++) {
+			if(squares[i].getDevArea().equals(devArea)) {
+				if(squares[i].getTime()< squares[i].getMaxTime() || squares[i].getMoney() < squares[i].getMaxMoney()) {
+					devAreaFinished = false;
+					break;
+				}
+			}
+		}
+		
+		if(devAreaFinished) {
+			gameBoard.removeConfirmationPanel();
+			String message = null;
+			if(devArea.equals("Lobbying")) {
+				message = "You have completed Lobbying the council task area, Govan will now have better public transport";
+			}
+			gameBoard.displayMessage(null, message);
 		}
 		
 	}

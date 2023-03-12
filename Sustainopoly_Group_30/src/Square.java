@@ -8,7 +8,7 @@ public class Square {
 	protected final String name;
 	private int maxMoney = 300;
 	private int maxTime = 0;
-	private int money = 300;
+	private int money = 0;
 	private int time = 0;
 	private String devArea = "Website";
 	private String info;
@@ -69,8 +69,8 @@ public class Square {
 	}
 	
 	public String getInfo() {
+		return "Task Area: "+ this.devArea + "\n"+ this.info + "\nMoney: " + this.money + "/" + this.maxMoney + "\nTime: " + this.time + "/" + this.maxTime;
 		
-		return this.info;
 		
 	}
 	
