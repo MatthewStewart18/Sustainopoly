@@ -1,9 +1,8 @@
 import java.lang.reflect.Array;
 
 public abstract class Investment {
-	private final int price;
-	private final int time;
-	protected Player partner;
+	private int price;
+	private int time;
 	private String name;
 	
 	public Investment(String name, int price, int time) {
@@ -18,25 +17,17 @@ public abstract class Investment {
 	public int getTime() {
 		return time;
 	}
-	public Player getPartner() {
-		return partner;
-	}
-	public void setPartner(Player newPartner) {
-		partner = newPartner;
+	
+	public void addTime(int time) {
+		this.time += time;
 	}
 	
+	public void addMoney(int money) {
+		this.price += money;
+	}
 
+	public String genName() {
+		return this.name;
+	}
 	
-	public void invested(Player currentPlayer) {
-		partner = currentPlayer;
-		currentPlayer.investIn(this);
-	}
-
-
-public void doAction(Player currentPlayer) {
-	if(currentPlayer == partner);
-	else {
-		
-	}
-}
 }

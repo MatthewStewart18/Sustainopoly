@@ -34,7 +34,7 @@ public class Game {
 			totalNeeded +=squares[i].getMaxMoney();
 			totalNeeded +=squares[i].getMaxTime();
 		}
-		bar = new CompletionBar();
+		bar = new CompletionBar(totalNeeded);
 		
 		gameBoard = new Board(squares, dis, createIcons(players), this, bar.getBar());
 		

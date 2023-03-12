@@ -19,10 +19,10 @@ public class CompletionBar {
 	
 	
 	JFrame frame = new JFrame();
-	JProgressBar bar = new JProgressBar(0, 5000);
+	JProgressBar bar ;
 	
-	CompletionBar() {
-		
+	CompletionBar(int max) {
+		bar = new JProgressBar(0, max);
 		bar.setValue(0);
 		bar.setBounds(0,0,700,100);
 		
