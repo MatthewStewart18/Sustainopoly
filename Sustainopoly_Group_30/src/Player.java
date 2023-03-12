@@ -83,13 +83,10 @@ public class Player {
 
 	}
 
-	public void listInvestments() {
-		if (investments.isEmpty()) {
-			System.out.println("You have no investments");
-		}
-		for (Investment investment : investments) {
-			System.out.println(investment);
-		}
+	public  ArrayList<Investment> listInvestments() {
+		
+		return investments;
+		
 	}
 
 	  
