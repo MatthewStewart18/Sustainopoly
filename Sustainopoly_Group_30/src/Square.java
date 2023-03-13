@@ -49,6 +49,12 @@ public class Square {
 		
 		if(devArea.equals("Lobbying")) {
 			header = Color.BLUE;
+		} else if (devArea.equals("Website")){
+			header = Color.GREEN;
+		} else if (devArea.equals("Advertising")){
+			header = Color.PINK;
+		} else if (devArea.equals("Fundraising")){
+			header = Color.ORANGE;
 		}
 		
 	}
