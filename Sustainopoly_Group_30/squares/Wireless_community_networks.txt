@@ -1,0 +1,9 @@
+800
+120
+250
+0
+Wireless community networks will enable the poor communities in Govan to access the internet and browse the website.
+ Mesh networks have been set up to spread wifi signal throughout the community.
+ Hardware upgrades have allowed the mesh network speeds to increase.
+ Multiple new hotspots have went live giving Govan greater wifi coverage.
+Wifi
