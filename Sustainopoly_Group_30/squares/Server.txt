@@ -1,0 +1,9 @@
+750
+120
+250
+0
+The server in Govan will host the website so the people of govan can access all the great features it has to offer.
+ You have successfully launched the website.
+ server speed and performance has been improved.
+ investing in new server hardware has reduced running costs.
+Website
