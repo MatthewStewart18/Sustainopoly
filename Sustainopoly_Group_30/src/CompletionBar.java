@@ -4,15 +4,20 @@ import java.awt.*;
 import javax.swing.*;
 public class CompletionBar {
 
-	public int completionBar = 0;
+	public static int completionBar = 0;
 	public boolean completionDone;
 	public double updateCompletionBar;
 	// public double amountDonated = 0;
 	// public double amountRequired = 10000;
 	
-	public double getValue() {
+	/**
+	 * Method returns value of completionBar
+	 * @return 
+	 */
+	public static double getValue() {
 		return completionBar;
 	}
+	
 	public double setValue() {
 		return completionBar;
 	}
@@ -29,7 +34,10 @@ public class CompletionBar {
 		bar.setStringPainted(true);
 		
 	}
-	
+	/**
+	 * Method updates progress bar and checks for completion
+	 * @param amount
+	 */
 	public void progress(int amount) {
 
 	        // Update the progress bar with the new donation
@@ -51,6 +59,10 @@ public class CompletionBar {
 //				completionDone = true;
 }
 	
+	/**
+	 * Method returns the progress bar
+	 * @return 
+	 */
 	public JProgressBar getBar() {
 		return bar;
 		
