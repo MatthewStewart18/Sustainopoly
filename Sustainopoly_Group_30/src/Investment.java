@@ -26,7 +26,7 @@ public abstract class Investment {
 		this.price += money;
 	}
 
-	public String genName() {
+	public String getName() {
 		return this.name;
 	}
 	

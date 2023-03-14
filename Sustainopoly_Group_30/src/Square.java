@@ -23,16 +23,16 @@ public class Square {
 	
 	public Square(String name) {
 		this.name = name;
-		
+		Scanner fileReader = null;
 		String[] file = new String[9];
 		impact = new String[3];
 		try {
 			File squareFile = new File("squares//" + name + ".txt");
-			Scanner fileReader = new Scanner(squareFile);
+			fileReader = new Scanner(squareFile);
 			for (int i = 0; i < 9; i++) {
 				file[i] = fileReader.nextLine();
 			}
-			fileReader.close();
+			
 			
 			this.maxMoney = Integer.parseInt(file[0]);
 			this.maxTime = Integer.parseInt(file[1]);
@@ -47,6 +47,9 @@ public class Square {
 		} catch (FileNotFoundException e) {
 		}
 		
+		if(fileReader != null) {
+			fileReader.close();
+		}
 		if(devArea.equals("Lobbying")) {
 			header = Color.BLUE;
 		} else if (devArea.equals("Website")){
