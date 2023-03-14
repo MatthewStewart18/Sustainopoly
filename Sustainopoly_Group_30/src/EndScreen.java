@@ -129,7 +129,12 @@ public class EndScreen extends JPanel{
 		infoText.add("2030:");
 		
 		for(int i = 0; i < players.length; i++) {
-			infoText.add(players[i].getName());
+			ArrayList<Investment> investments = players[i].listInvestments();
+			String text = players[i].getName();
+			for(int j = 0; j < investments.size(); j++) {
+				text = text + "\n" + investments.get(j).getName() + ": "+ investments.get(j).getPrice() + "pounds, " + investments.get(j).getTime() + " hours";
+			}
+			infoText.add(text);
 		}
 		
 		

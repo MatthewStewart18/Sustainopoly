@@ -22,7 +22,7 @@ public class Game {
 	
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
-		String[] squareNames = {"New Week", "Temp", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Temp", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
+		String[] squareNames = {"New Week", "Wireless Community Networks", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Govan Share", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
 					squares = new Square[20];
 		
 					for(int i = 0; i < squareNames.length; i++) {
@@ -188,9 +188,6 @@ public class Game {
 	public int[] rollDice() {
 		if(!canEndTurn) {
 			int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
-		
-			dice[0] = 1;
-			dice[1] = 2;
 			
 		players[currentPlayer].move(dice[0] + dice[1], gameBoard);
 		
