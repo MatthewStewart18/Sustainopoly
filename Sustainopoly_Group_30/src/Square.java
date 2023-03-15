@@ -52,12 +52,21 @@ public class Square {
 		}
 		if(devArea.equals("Lobbying")) {
 			header = Color.BLUE;
+			taskLeader = -1;
 		} else if (devArea.equals("Website")){
 			header = Color.GREEN;
+			taskLeader = -1;
 		} else if (devArea.equals("Advertising")){
 			header = Color.PINK;
+			taskLeader = -1;
 		} else if (devArea.equals("Fundraising")){
 			header = Color.ORANGE;
+			taskLeader = -2;
+		} else if (devArea.equals("Chance")){
+			header = Color.MAGENTA;
+			taskLeader = -2;
+		} else if (devArea.equals("Corner")){
+			taskLeader = -2;
 		}
 		
 	}
