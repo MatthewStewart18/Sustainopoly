@@ -61,7 +61,12 @@ public class Square {
 			taskLeader = -1;
 		} else if (devArea.equals("Fundraising")){
 			header = Color.ORANGE;
-			taskLeader = -1;
+			taskLeader = -2;
+		} else if (devArea.equals("Chance")){
+			header = Color.MAGENTA;
+			taskLeader = -2;
+		} else if (devArea.equals("Corner")){
+			taskLeader = -2;
 		}
 		
 	}

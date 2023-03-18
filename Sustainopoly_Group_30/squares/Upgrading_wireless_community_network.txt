@@ -1,0 +1,9 @@
+800
+120
+250
+0
+Upgrading the community network will increase wifi speeds and reduce latency
+ . The broadband download speeds have been increased to 250mb/s
+ . The broadband upload speeds have been increased to 100mb/s
+ . New high end modems have been deployed to distribute the wifi
+Wifi
