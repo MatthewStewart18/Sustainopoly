@@ -14,7 +14,7 @@ public class Square {
 	private String info;
 	private String[] impact;
 	private Color header = Color.PINK;
-	private int taskLeader = -1;
+	private int taskLeader = -2;
 	
 	// website : Govanshare, 
 	
@@ -87,8 +87,16 @@ public class Square {
 	}
 	
 	public String getInfo() {
-		return "Task Area: "+ this.devArea + "\n"+ this.info + "\nMoney: " + this.money + "/" + this.maxMoney + "\nTime: " + this.time + "/" + this.maxTime;
+		String text = "Task Area: "+ this.devArea + "\n"+ this.info;
+		if(maxMoney>0) {
+			text += "\nMoney: " + this.money + "/" + this.maxMoney;
+		}
+		if(maxTime > 0) {
+			text += "\nTime: " + this.time + "/" + this.maxTime;
+		}
+
 		
+		return text;
 		
 	}
 	
