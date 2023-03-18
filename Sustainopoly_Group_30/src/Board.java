@@ -1255,7 +1255,7 @@ public class Board extends JLayeredPane implements MouseListener {
 				
 				if(position == numOfSquares) {
 					playerCanMove = false;
-					displayMessage(null, "You Have Started A new Week");
+					displayMessage(null, "You Have Started A new Week, your time has been replenished and server running costs have been deducted");
 					position = 0;
 				}
 				

@@ -212,7 +212,6 @@ public class Game {
 	
 	public void endTurn() {
 		if(canEndTurn) {
-			display.openEndScreen(true, players);
 			if(players[currentPlayer].getMoney() < 0) {
 				display.openEndScreen(false, players);
 			}
@@ -259,10 +258,9 @@ public class Game {
 			}
 			
 			gameBoard.zoomOut();
+			players[currentPlayer].investIn(money, time, squares[square].getName());
 			
-			for(int i = 0; i< squares.length; i++) {
-				
-			}
+			
 			bar.progress(money + time); 
 		}
 		

@@ -128,9 +128,19 @@ public class Player {
 	 * @param investment
 	 */
 	// adding invest to players investments
-	public void investIn(Investment investment) {
-		addMoney(-investment.getPrice());
-		investments.add(investment);
+	public void investIn(int money, int time, String squareName) {
+		boolean exists = false;
+		for(int i = 0; i< investments.size(); i++) {
+			
+			if(investments.get(i).getName().equals(squareName)) {
+				investments.get(i).addMoney(money);
+				investments.get(i).addTime(time);
+				exists = true;
+			}
+		}
+		if(exists == false) {
+			investments.add(new Investment(squareName, money, time));
+		}
 
 	}
 

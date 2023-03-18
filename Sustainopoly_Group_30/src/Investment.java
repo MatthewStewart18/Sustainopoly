@@ -1,6 +1,6 @@
 import java.lang.reflect.Array;
 
-public abstract class Investment {
+public class Investment {
 	private int price;
 	private int time;
 	private String name;

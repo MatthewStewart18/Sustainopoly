@@ -3,7 +3,7 @@
 250
 0
 The website contains the Govan Share app and all information required to get involved in the revival of Govan.
- Users can now make accounts on the website allowing easy access.
- New features i.e. community formums have been added to the website.
- daily updates about Govan can now be posted on the website.
+ so users can now make accounts on the website allowing easy access.
+, new features i.e. community formums have been added to the website.
+ so daily updates about Govan can now be posted on the website.
 Website

@@ -24,6 +24,7 @@ public class EndScreen extends JPanel{
 	private JLabel title;//the label containing the title
 	private int screenWidth;
 	private int screenHeight;
+	private boolean win;
 	
 	private Player[] players;
 	
@@ -32,6 +33,7 @@ public class EndScreen extends JPanel{
 	public EndScreen(Display display, boolean win, Player[] players) {
 		this.display = display;
 		this.players = players;
+		this.win = win;
 		//sets the layout manager of the panel to be GridBag
 		setLayout(new GridBagLayout());
 		GridBagConstraints gridCon = new GridBagConstraints();
@@ -100,8 +102,8 @@ public class EndScreen extends JPanel{
 			 */
 			 @Override
 			public void paint(Graphics g) {
-				setMinimumSize(new Dimension((int) (screenWidth/2), (int) (screenHeight/5*3)));
-				setPreferredSize(new Dimension((int) (screenWidth/2), (int) (screenHeight/5*3)));
+				setMinimumSize(new Dimension((int) (screenWidth/4*3), (int) (screenHeight/5*3)));
+				setPreferredSize(new Dimension((int) (screenWidth/4*3), (int) (screenHeight/5*3)));
 				Graphics2D sqImGraphics = (Graphics2D) g;
 				sqImGraphics.setColor(foregroundColour);
 				sqImGraphics.fillRoundRect(5,5, this.getWidth()-10, this.getHeight()-10, 30,30);
@@ -122,17 +124,20 @@ public class EndScreen extends JPanel{
 		
 		
 		ArrayList<String> infoText = new ArrayList();
-		infoText.add("2023:");
-		infoText.add("2024:");
-		infoText.add("2025:");
-		infoText.add("2026:");
-		infoText.add("2030:");
+		if(win) {
+			infoText.add("2023:");
+			infoText.add("2024:");
+			infoText.add("2025:");
+			infoText.add("2026:");
+			infoText.add("2030:");
+		}
+		
 		
 		for(int i = 0; i < players.length; i++) {
 			ArrayList<Investment> investments = players[i].listInvestments();
 			String text = players[i].getName();
 			for(int j = 0; j < investments.size(); j++) {
-				text = text + "\n" + investments.get(j).getName() + ": "+ investments.get(j).getPrice() + "pounds, " + investments.get(j).getTime() + " hours";
+				text = text + "\n" + investments.get(j).getName() + ": "+ investments.get(j).getPrice() + " pounds, " + investments.get(j).getTime() + " hours";
 			}
 			infoText.add(text);
 		}
@@ -140,8 +145,8 @@ public class EndScreen extends JPanel{
 		
 		JTextPane description = new JTextPane() {
 			public void paint(Graphics g) {
-				setMinimumSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/5*2)));
-				setPreferredSize(new Dimension((int) (screenWidth/3), (int) (screenHeight/5*2)));
+				setMinimumSize(new Dimension((int) (screenWidth/5*3), (int) (screenHeight/5*2)));
+				setPreferredSize(new Dimension((int) (screenWidth/5*3), (int) (screenHeight/5*2)));
 				setFont(new Font("Arial", Font.BOLD, (int) (screenWidth / 50)));
 				setText(infoText.get(currentText));
 				this.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
