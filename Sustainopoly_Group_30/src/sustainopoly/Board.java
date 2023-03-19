@@ -346,8 +346,8 @@ public class Board extends JLayeredPane implements MouseListener {
 			public void paint(Graphics g) {
 		
 			Graphics2D sqImGraphics = (Graphics2D) g;
-			setMinimumSize(new Dimension(screenWidth/3, screenHeight/3));
-			setPreferredSize(new Dimension(screenWidth/3, screenHeight/3));
+			setMinimumSize(new Dimension(screenWidth/3, screenHeight/2));
+			setPreferredSize(new Dimension(screenWidth/3, screenHeight/2));
 			
 			//draw a border around the panel with rounded corners
 			sqImGraphics.setColor(background);

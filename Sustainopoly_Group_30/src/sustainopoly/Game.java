@@ -245,20 +245,21 @@ public class Game {
 	
 	public void endTurn() {
 		if(canEndTurn) {
-			if(players[currentPlayer].getMoney() < 0) {
-				display.openEndScreen(false, players);
-			}
 			
 			if(bar.isCompleted()) {
 				display.openEndScreen(true, players);
+			}else if(players[currentPlayer].getMoney() < 0) {
+				display.openEndScreen(false, players);
+			} else {
+				currentPlayer++;
+				if (currentPlayer >= players.length) {
+					currentPlayer = 0;
+				}
+
+				startTurn();
 			}
 			
-			currentPlayer++;
-			if(currentPlayer >= players.length) {
-				currentPlayer = 0;
-			}
 			
-			startTurn();
 		}
 	}
 	
