@@ -257,8 +257,21 @@ public class Board extends JLayeredPane implements MouseListener {
 		disableButtons(true);
 
 		confirm = new JPanel() {
+			public void paint(Graphics g) {
+		
+			Graphics2D sqImGraphics = (Graphics2D) g;
+			setMinimumSize(new Dimension(screenWidth/3, screenHeight/2));
+			setPreferredSize(new Dimension(screenWidth/3, screenHeight/2));
 			
-		};
+			//draw a border around the panel with rounded corners
+			sqImGraphics.setColor(background);
+			sqImGraphics.fillRoundRect(5,5, this.getWidth()-10, this.getHeight()-10, 30,30);
+			sqImGraphics.setStroke(new BasicStroke(10));
+			sqImGraphics.setColor(borderColour);
+			sqImGraphics.drawRoundRect(5,5, this.getWidth()-10, this.getHeight()-10, 30,30);
+			
+			super.paint(g);
+		}};
 		SpringLayout sprLayout = new SpringLayout();
 		confirm.setLayout(sprLayout);
 		confirm.setBackground(background);
@@ -273,7 +286,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		message.setEditable(false);
 		message.setForeground(textColour);
 		message.setBackground(foregroundColour);
-		message.setFont(new Font("Arial", Font.PLAIN, 40));
+		message.setFont(new Font("Arial", Font.PLAIN, screenHeight/30));
 		message.setPreferredSize(new Dimension(400, 400));
 		message.setText("\n\n" + messageText);
 		
@@ -348,6 +361,7 @@ public class Board extends JLayeredPane implements MouseListener {
 			Graphics2D sqImGraphics = (Graphics2D) g;
 			setMinimumSize(new Dimension(screenWidth/3, screenHeight/2));
 			setPreferredSize(new Dimension(screenWidth/3, screenHeight/2));
+			setFont(new Font("Arial", Font.PLAIN, screenHeight/70));
 			
 			//draw a border around the panel with rounded corners
 			sqImGraphics.setColor(background);
@@ -370,7 +384,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		text.setEditable(false);
 		text.setForeground(textColour);
 		text.setBackground(foregroundColour);
-		text.setFont(new Font("Arial", Font.PLAIN, 40));
+		text.setFont(new Font("Arial", Font.PLAIN, screenHeight/30));
 		text.setPreferredSize(new Dimension(screenWidth/4, screenHeight/4));
 		text.setText( messageText);
 		
