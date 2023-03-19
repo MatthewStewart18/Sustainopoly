@@ -1,3 +1,4 @@
+package sustainopoly;
 import java.awt.*;
 import java.io.File;  
 import java.io.FileNotFoundException; 
@@ -67,6 +68,12 @@ public class Square {
 			taskLeader = -2;
 		} else if (devArea.equals("Corner")){
 			taskLeader = -2;
+		}else if(devArea.equals("Wifi")) {
+			header = Color.RED;
+			taskLeader = -1;
+		} else if(devArea.equals("Fundraise Money")) {
+			header = Color.RED;
+			taskLeader = 100;
 		}
 		
 	}

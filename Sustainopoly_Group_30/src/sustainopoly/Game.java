@@ -1,3 +1,4 @@
+package sustainopoly;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -15,14 +16,15 @@ public class Game {
 	private Board gameBoard;
 	private Square[] squares;
 	private boolean canEndTurn = false;
+	private boolean startOfTurn = false;
 	private Display display;
 	private Player[] players;
 	private int currentPlayer = 0;
-	CompletionBar bar;
+	private CompletionBar bar;
 	
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
-		String[] squareNames = {"New Week", "Wireless Community Networks", "Donation Page","Create Poll", "Server", "Fundraiser- Donate Phones", "Govan Share", "Donation Page", "Chance", "Create Website", "Developer Event", "Temp" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Temp", "Petition Council", "Chance", "Online Advertisement"};
+		String[] squareNames = {"New Week", "Wireless Community Networks", "Donation Page","Create Poll", "Server", "Fundraiser", "Govan Share", "Donation Page", "Chance", "Create Website", "Developer Event", "Upgrading wireless community network" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Fundraiser- Donate Phones", "Petition Council", "Chance", "Online Advertisement"};
 					squares = new Square[20];
 		
 					for(int i = 0; i < squareNames.length; i++) {
@@ -34,7 +36,7 @@ public class Game {
 			totalNeeded +=squares[i].getMaxMoney();
 			totalNeeded +=squares[i].getMaxTime();
 		}
-		bar = new CompletionBar(totalNeeded);
+		bar = new CompletionBar(totalNeeded - 80);
 		
 		gameBoard = new Board(squares, dis, createIcons(players), this, bar.getBar());
 		
@@ -103,13 +105,43 @@ public class Game {
 	
 	public void displaySquareInfo(int focusedSquare) {
 		
-		gameBoard.displaySquareInfo(focusedSquare);
+		if( startOfTurn == true) {
+			if(squares[focusedSquare].getName().equals("Chance")) {
+			
+				Chance.chanceTime(gameBoard, players, currentPlayer);
+			
+			} else if(squares[focusedSquare].getName().equals("Donation Page")) {
+				int moneyMade = (int) (Math.random()*200+100);
+				
+				gameBoard.displayMessage(null, "The donation page on the website has made " + moneyMade + " pounds");
+				players[currentPlayer].addMoney(moneyMade);
+				gameBoard.setMoney(players[currentPlayer].getMoney());
+			} else if(squares[focusedSquare].getName().equals("Developer Event")) {
+				gameBoard.displayMessage(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						
+						gameBoard.removeConfirmationPanel();
+						endTurn();
+						gameBoard.zoomOut();
+						
+					}
+					
+				}, "You are participating in a developer event so you skip your turn");
+			}
+	
+			startOfTurn = false;
+			
+		}
+		
 		
 		if (players[currentPlayer].getPosition() == focusedSquare) {
 			if(squares[focusedSquare].getTaskLeader() >= 0) {
 				gameBoard.displaySquareInfoAndResources(focusedSquare);
 			}
 			else if (squares[focusedSquare].getTaskLeader() == -1) {
+				gameBoard.displaySquareInfo(focusedSquare);
 
 				int initMoney = squares[focusedSquare].getInitialMoneyInvestment();
 				int initTime = squares[focusedSquare].getInitialTimeInvestment();
@@ -192,6 +224,7 @@ public class Game {
 		players[currentPlayer].move(dice[0] + dice[1], gameBoard);
 		
 		canEndTurn = true;
+		startOfTurn = true;
 		return dice;
 		}
 		else {
@@ -216,6 +249,10 @@ public class Game {
 				display.openEndScreen(false, players);
 			}
 			
+			if(bar.isCompleted()) {
+				display.openEndScreen(true, players);
+			}
+			
 			currentPlayer++;
 			if(currentPlayer >= players.length) {
 				currentPlayer = 0;
@@ -232,6 +269,16 @@ public class Game {
 		} else if (players[currentPlayer].getMoney() < money) {
 			gameBoard.displayMessage(null, "You do not have enough money remaining");
 
+		} else if(squares[square].getName().equals("Fundraiser")){
+			int moneyEarned = time*20;
+			gameBoard.displayMessage(null, "You have earned " + moneyEarned + " pounds");
+			
+			players[currentPlayer].addMoney(moneyEarned);
+			gameBoard.setMoney(players[currentPlayer].getMoney());
+			
+			players[currentPlayer].addTime(-time);
+			gameBoard.setTime(players[currentPlayer].getTime());
+			
 		}else {
 			
 			if(money > 0 && time > 0) {

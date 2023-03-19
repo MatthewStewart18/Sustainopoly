@@ -1,3 +1,4 @@
+package sustainopoly;
 
 
 import java.awt.*;
@@ -5,7 +6,8 @@ import javax.swing.*;
 public class CompletionBar {
 
 	public static int completionBar = 0;
-	public boolean completionDone;
+	public boolean completionDone = false;
+	private int max = 0;
 	public double updateCompletionBar;
 	// public double amountDonated = 0;
 	// public double amountRequired = 10000;
@@ -18,8 +20,8 @@ public class CompletionBar {
 		return completionBar;
 	}
 	
-	public double setValue() {
-		return completionBar;
+	public boolean isCompleted() {
+		return completionDone;
 	}
 	
 	
@@ -27,11 +29,13 @@ public class CompletionBar {
 	JProgressBar bar ;
 	
 	CompletionBar(int max) {
+		this.max = max;
 		bar = new JProgressBar(0, max);
 		bar.setValue(0);
 		bar.setBounds(0,0,700,100);
 		
 		bar.setStringPainted(true);
+		completionBar = 0;
 		
 	}
 	/**
@@ -41,14 +45,13 @@ public class CompletionBar {
 	public void progress(int amount) {
 
 	        // Update the progress bar with the new donation
-	        int currentValue = bar.getValue();
-	        int newValue = currentValue + amount;
-	        bar.setValue(newValue);
+	        completionBar = completionBar + amount;
+	        bar.setValue(completionBar);
 
 	        // Check if the goal has been reached
-	        if (newValue >= 5000) {
+	        if (completionBar >= max) {
 	            // Game Finishes when goal donation is raised
-	            System.out.println("Progress Bar Completed");
+	        	completionDone = true;
 	        }
 	    	 	
 		

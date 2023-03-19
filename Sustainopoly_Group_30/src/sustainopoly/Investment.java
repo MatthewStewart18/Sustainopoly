@@ -1,3 +1,4 @@
+package sustainopoly;
 import java.lang.reflect.Array;
 
 public class Investment {

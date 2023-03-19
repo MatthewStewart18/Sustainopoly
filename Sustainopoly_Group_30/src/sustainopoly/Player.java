@@ -1,3 +1,4 @@
+package sustainopoly;
 import java.util.ArrayList;
 
 public class Player {
@@ -104,7 +105,7 @@ public class Player {
 		// passing go
 		if (position >= 20) {
 			
-			playerMoney -= 100;
+			playerMoney -= 50;
 			playerTime = 40;
 			position %= 20;
 			board.setTime(playerTime);
@@ -120,7 +121,7 @@ public class Player {
 	 * @param board
 	 */
 	public void moveTo(int toPosition, Board board) {
-		move((25 - position + toPosition) % 25, board);
+		move((20 - position + toPosition) % 20, board);
 	}
 
 	/**
