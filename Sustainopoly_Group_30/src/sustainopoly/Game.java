@@ -333,4 +333,8 @@ public class Game {
 		}
 		
 	}
+	
+	public Player[] getPlayers() {
+		return  players;
+	}
 }

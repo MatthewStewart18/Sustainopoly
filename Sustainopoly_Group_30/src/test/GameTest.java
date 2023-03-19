@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import sustainopoly.Board;
 import sustainopoly.Game;
+import sustainopoly.Player;
 
 /**
  * 
@@ -48,7 +49,10 @@ class GameTest {
 	 */
 	@Test
 	void testGame() {
-		fail("Not yet implemented");
+		Player[] players = game.getPlayers();
+		assertEquals(players[0].getName(), "player1");
+		assertEquals(players[1].getName(), "player2");
+		assertEquals(players[2].getName(), "player3");
 	}
 
 	/**
@@ -65,13 +69,6 @@ class GameTest {
 		
 	}
 
-	/**
-	 * Test method for {@link Game#displaySquareInfo(int)}.
-	 */
-	@Test
-	void testDisplaySquareInfo() {
-		fail("Not yet implemented");
-	}
 
 	/**
 	 * tests that the dice returned are 2 numbers from 1 and 6
@@ -88,18 +85,22 @@ class GameTest {
 	 * Test method for {@link Game#rollDice()}.
 	 */
 	@Test
-	void testRollDiceRandom() {
-		int[] dice = game.rollDice();
-		assertTrue(dice[0]>0 && dice[0]<=6);
-		assertTrue(dice[1]>0 && dice[1]<=6);
+	void testDiceOnlyRollOnce() {
+		game.rollDice();
+		assertTrue(game.rollDice()==null);
 	}
 
 	/**
 	 * Test method for {@link Game#endTurn()}.
 	 */
 	@Test
-	void testEndTurn() {
-		fail("Not yet implemented");
+	void testDiceCanRerollAfterEndTurn() {
+		game.rollDice();
+		assertTrue(game.rollDice()==null);
+		game.endTurn();
+		int[] dice = game.rollDice();
+		assertTrue(dice[0]>0 && dice[0]<=6);
+		assertTrue(dice[1]>0 && dice[1]<=6);
 	}
 
 	/**
@@ -107,7 +108,84 @@ class GameTest {
 	 */
 	@Test
 	void testSpendResources() {
-		fail("Not yet implemented");
+		Player[] players = game.getPlayers();
+		int initialTime = players[0].getTime();
+		int initialMoney = players[0].getMoney();
+		
+		game.spendResources(20, 100, 1);
+		
+		assertEquals(players[0].getTime(), initialTime -= 20);
+		assertEquals(players[0].getMoney(), initialMoney -= 100);
+		
+		game.spendResources(0, 100, 1);
+		
+		assertEquals(players[0].getTime(), initialTime );
+		assertEquals(players[0].getMoney(), initialMoney -= 100);
+		
+		game.spendResources(20, 0, 1);
+		
+		assertEquals(players[0].getTime(), initialTime -= 20);
+		assertEquals(players[0].getMoney(), initialMoney );
+	}
+	
+	@Test
+	void testGainMoneyFromFundraiser() {
+		Player[] players = game.getPlayers();
+		int initialTime = players[0].getTime();
+		int initialMoney = players[0].getMoney();
+		
+		game.spendResources(10, 0, 5);
+		
+		assertEquals(players[0].getTime(), initialTime - 10);
+		assertEquals(players[0].getMoney(), initialMoney + 200);
+	}
+	
+
+	
+	@Test
+	void testSpendTooMuchTime() {
+		Player[] players = game.getPlayers();
+		int initialTime = players[0].getTime();
+		int initialMoney = players[0].getMoney();
+		
+		game.spendResources(200, 100, 1);
+		
+		assertEquals(players[0].getTime(), initialTime);
+		assertEquals(players[0].getMoney(), initialMoney);
+	}
+	
+	@Test
+	void testSpendToMuchMoney() {
+		Player[] players = game.getPlayers();
+		int initialTime = players[0].getTime();
+		int initialMoney = players[0].getMoney();
+		
+		game.spendResources(20, 10000, 1);
+		
+		assertEquals(players[0].getTime(), initialTime);
+		assertEquals(players[0].getMoney(), initialMoney);
+	}
+	
+	@Test
+	void testPlayerMovesAfterDiceMove() {
+		int[] dice = game.rollDice();
+		int movement = dice[0] + dice[1];
+		
+		Player[] players = game.getPlayers();
+		
+		assertEquals(players[0].getPosition(), movement);
+	}
+	
+	@Test
+	void testNextPlayerMovesAfterEndTurn() {
+		game.rollDice();
+		game.endTurn();
+		int[] dice = game.rollDice();
+		int movement = dice[0] + dice[1];
+		
+		Player[] players = game.getPlayers();
+		
+		assertEquals(players[1].getPosition(), movement);
 	}
 
 }
