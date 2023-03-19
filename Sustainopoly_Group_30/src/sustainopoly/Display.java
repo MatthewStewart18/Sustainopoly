@@ -1,3 +1,4 @@
+package sustainopoly;
 
 
 import java.awt.*;
@@ -42,7 +43,7 @@ public class Display extends JFrame{
 		setTitle("SUSTAINOPOLY");//sets the frame name to SUSTAINOPOLY
 		
 		layout = new CardLayout();//creates a new cardLayout LayoutManager
-		setLayout(layout);//sets the frames panels layout to the cardLayout
+		setLayout(layout);//sets the frames panels layout to the cardLayout 
 		
 		displaySettings = new DisplaySettings(this);//creates a new DisplaySettings panel
 		gameStartMenu = new StartMenu(this);//creates a new StartMenu panel

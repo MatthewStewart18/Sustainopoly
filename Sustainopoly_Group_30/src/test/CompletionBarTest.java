@@ -1,5 +1,8 @@
+package test;
 import org.junit.jupiter.api.Test;
 
+import sustainopoly.CompletionBar;
+import sustainopoly.Game;
 import junit.framework.TestCase;
 
 public class CompletionBarTest extends TestCase {

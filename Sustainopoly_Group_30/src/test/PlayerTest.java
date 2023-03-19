@@ -1,5 +1,6 @@
+package test;
 import org.junit.Test;
-
+import sustainopoly.Game;
 import junit.framework.TestCase;
 
 public class PlayerTest extends TestCase {

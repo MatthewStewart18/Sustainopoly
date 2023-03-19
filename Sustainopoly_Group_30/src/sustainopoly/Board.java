@@ -1,3 +1,4 @@
+package sustainopoly;
 import java.awt.*;
 
 import javax.imageio.ImageIO;
@@ -69,6 +70,7 @@ public class Board extends JLayeredPane implements MouseListener {
 	private boolean finishedAnimation = false;
 	private boolean playerCanMove;
 	private boolean darkMode = false;
+	private boolean messageDisplayed = false;
 
 	private int[] playerPositions;
 	private BufferedImage[] playerIcons;
@@ -250,7 +252,8 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	public void getConfirmation(ActionListener outputYes, ActionListener outputNo, String messageText) {
 
-		
+		removeConfirmationPanel();
+		messageDisplayed = true;
 		disableButtons(true);
 
 		confirm = new JPanel() {
@@ -328,6 +331,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	public void removeConfirmationPanel() {
 		disableButtons(false);
+		messageDisplayed = false;
 		if(confirm != null)overlay.remove(confirm);
 		if(message != null)overlay.remove(message);
 		repaint();
@@ -335,8 +339,9 @@ public class Board extends JLayeredPane implements MouseListener {
 	}
 	
 	public void displayMessage(ActionListener outputContinue, String messageText) {
+		removeConfirmationPanel();
 		disableButtons(true);
-
+		messageDisplayed = true;
 		message = new JPanel() {
 			public void paint(Graphics g) {
 		
@@ -377,8 +382,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					overlay.remove(message);
-					disableButtons(false);
+					removeConfirmationPanel();
 					playerCanMove = true;
 					repaint();
 					revalidate();
@@ -1255,7 +1259,7 @@ public class Board extends JLayeredPane implements MouseListener {
 				
 				if(position == numOfSquares) {
 					playerCanMove = false;
-					displayMessage(null, "You Have Started A new Week, your time has been replenished and server running costs have been deducted");
+					displayMessage(null, "You Have Started A new Week, your time has been replenished and 50 pounds have been deducted for server running costs");
 					position = 0;
 				}
 				
@@ -1407,11 +1411,16 @@ public class Board extends JLayeredPane implements MouseListener {
 				}
 			}
 
-			if (zoomIn) {
+			try {
+				if (zoomIn) {
 				boardImage.setIcon(new ImageIcon(squareAnimationImages[loopNum]));
 			} else {
 				boardImage.setIcon(new ImageIcon(squareAnimationImages[30 - loopNum]));
 			}
+			}catch(Exception e) {
+				
+			}
+			
 
 			if (loopNum == 30) {
 				if (!zoomIn) {
@@ -1423,9 +1432,13 @@ public class Board extends JLayeredPane implements MouseListener {
 
 					animationPanel.remove(boardImage);
 					for (int j = 0; j < 30; j++) {
+						try {
 						squareAnimationImages[j].flush();
 						squareAnimationImages[j] = null;
 						System.gc();
+						}catch(Exception e) {
+							
+						} 
 
 					}
 
@@ -1508,7 +1521,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		public void actionPerformed(ActionEvent e) {
 
 			// TODO Auto-generated method stub
-			if (!buttonsDisabled) {
+			if (!buttonsDisabled && !messageDisplayed) {
 				buttonsDisabled = true;
 				Object ob = e.getSource();
 
@@ -1671,7 +1684,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (isZoomed && !buttonsDisabled) {
+		if (isZoomed && !buttonsDisabled && !messageDisplayed) {
 
 			int xPos = e.getX();
 			int yPos = e.getY();
