@@ -126,11 +126,11 @@ public class EndScreen extends JPanel{
 		
 		ArrayList<String> infoText = new ArrayList();
 		if(win) {
-			infoText.add("2023:");
-			infoText.add("2024:");
-			infoText.add("2025:");
-			infoText.add("2026:");
-			infoText.add("2030:");
+			infoText.add("2023: \nYou have just released the website for public use.\nA few people have started using it.");
+			infoText.add("2024:\nThe traffic on the site has drasticaly increased.\nDonating old phones to people has made the website much more well known.");
+			infoText.add("2025:\nThe number of active users of the website has reached over 2 thousand");
+			infoText.add("2026:\nWith the large number of users, the district council is listening to the polls hosted on the website.\nThis means th eease of travel in govan should increase");
+			infoText.add("2030:\nThanks to the website and the chabges in public transport due to the polls on the website, transportation in Govan has become much easier");
 		}
 		
 		
