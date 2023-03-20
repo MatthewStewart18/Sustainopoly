@@ -140,7 +140,12 @@ public class Rules extends JPanel{
 		image.setFocusPainted(false);
 		image.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, borderColour));
 		
-		String[] infoText = {"To start your turn press the dice", "if you press a square it will zoom in on the square and give you a description about it"};
+		String[] infoText = {"To start your turn press the dice", "if you press a square it will zoom in on the square and give you a description about it", 
+				"Every time you start a new week your time returns to 40 hours and 50 pounds is taken from your money", "If you run out of money everyone will lose the game", 
+				"before you can progress on a task you must own the task which requires an initial investment", 
+				"To progress a task you must spend resources on it by clicking on it and using the sliders",
+				"You can only progress tasks you own or are currently landed on",
+				"If you do not have enough of a resouce, spending the resource will fail", "progressing tasks will increase the progress bar and once it hits 100% you will win"};
 		
 		JTextPane description = new JTextPane() {
 			public void paint(Graphics g) {
@@ -179,7 +184,7 @@ public class Rules extends JPanel{
 		next.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				if(currentPic < 2) {
+				if(currentPic < 9) {
 					currentPic++;
 				}
 			}
