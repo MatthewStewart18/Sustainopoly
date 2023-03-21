@@ -29,8 +29,8 @@ public class CompletionBar {
 	JProgressBar bar ;
 	
 	CompletionBar(int max) {
-		this.max = 1000;
-		bar = new JProgressBar(0, 1000);
+		this.max = max;
+		bar = new JProgressBar(0, max);
 		bar.setValue(0);
 		bar.setBounds(0,0,700,100);
 		

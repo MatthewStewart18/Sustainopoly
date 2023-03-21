@@ -315,7 +315,13 @@ public class Game {
 			String message = null;
 			if(devArea.equals("Lobbying")) {
 				message = "You have completed Lobbying the council task area, Govan will now have better public transport";
-			}
+			}else if (devArea.equals("Website")){
+				message = "You have completed the website task area, all the features have been added";
+			} else if (devArea.equals("Advertising")){
+				message = "You have completed the advertising task area, the app is now more wee known";
+			} else if(devArea.equals("Wifi")) {
+				message = "You have completed the wifi task area, Govan will now have better wifi access";
+			} 
 			gameBoard.displayMessage(null, message);
 		}
 		
