@@ -22,6 +22,16 @@ public class Game {
 	private int currentPlayer = 0;
 	private CompletionBar bar;
 	
+	/**
+	 * constructor for Game class
+	 * creates an array of squares with the names from the squaresNames array
+	 * gets the total resources needed to finish the game by adding up the required resources for each square and creates the progress bar with the number calculated
+	 * creates the players icons and set the icon and colour from the information in the players ArrayList
+	 * creates the game board with the squares, display, player icons and the progress bar
+	 * Finally initialise the player classes using the names from the players ArrayList then starts the game
+	 * @param players - the name icon and colour of each player
+	 * @param dis - the display class which controls what is being shown
+	 */
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
 		String[] squareNames = {"New Week", "Wireless Community Networks", "Donation Page","Create Poll", "Server", "Fundraiser", "Govan Share", "Donation Page", "Chance", "Create Website", "Developer Event", "Upgrading wireless community network" , "Donation Page",  "Chance", "Real World Advertisement", "Fundraiser", "Fundraiser- Donate Phones", "Petition Council", "Chance", "Online Advertisement"};
@@ -315,7 +325,13 @@ public class Game {
 			String message = null;
 			if(devArea.equals("Lobbying")) {
 				message = "You have completed Lobbying the council task area, Govan will now have better public transport";
-			}
+			}else if (devArea.equals("Website")){
+				message = "You have completed the website task area, all the features have been added";
+			} else if (devArea.equals("Advertising")){
+				message = "You have completed the advertising task area, the app is now more wee known";
+			} else if(devArea.equals("Wifi")) {
+				message = "You have completed the wifi task area, Govan will now have better wifi access";
+			} 
 			gameBoard.displayMessage(null, message);
 		}
 		
