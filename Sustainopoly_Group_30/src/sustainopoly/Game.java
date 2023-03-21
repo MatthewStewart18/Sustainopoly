@@ -275,42 +275,28 @@ public class Game {
 			gameBoard.displayMessage(null, "You have earned " + moneyEarned + " pounds");
 			
 			players[currentPlayer].addMoney(moneyEarned);
-			gameBoard.setMoney(players[currentPlayer].getMoney());
 			
 			players[currentPlayer].addTime(-time);
-			gameBoard.setTime(players[currentPlayer].getTime());
 			
 		}else {
 			
-			if(money > 0 && time > 0) {
-				squares[square].setMoney(money);
-				players[currentPlayer].addMoney(-money);
-				gameBoard.setMoney(players[currentPlayer].getMoney());
-				squares[square].setTime(time);
-				players[currentPlayer].addTime(-time);
-				gameBoard.setTime(players[currentPlayer].getTime());
-				gameBoard.displayMessage(null, "You have invested "+ money +" pounds and " + time +" hours in " + squares[square].getName() + squares[square].getImpact());
-			}
-			else if(money > 0) {
-				squares[square].setMoney(money);
-				players[currentPlayer].addMoney(-money);
-				gameBoard.setMoney(players[currentPlayer].getMoney());
-				gameBoard.displayMessage(null, "You have invested "+ money +" pounds in " + squares[square].getName() + squares[square].getImpact());
-			}
 			
-			else if(time > 0) {
-				squares[square].setTime(time);
-				players[currentPlayer].addTime(-time);
-				gameBoard.setTime(players[currentPlayer].getTime());
-				gameBoard.displayMessage(null, "You have invested "  + time +" hours in " + squares[square].getName() + squares[square].getImpact());
-			}
+			squares[square].setMoney(money);
+			players[currentPlayer].addMoney(-money);
 			
+			squares[square].setTime(time);
+			players[currentPlayer].addTime(-time);
+			
+			gameBoard.displayMessage(null, "You have invested " + money + " pounds and " + time + " hours in "
+					+ squares[square].getName() + squares[square].getImpact());
+
 			gameBoard.zoomOut();
 			players[currentPlayer].investIn(money, time, squares[square].getName());
 			
-			
 			bar.progress(money + time); 
 		}
+		gameBoard.setMoney(players[currentPlayer].getMoney());
+		gameBoard.setTime(players[currentPlayer].getTime());
 		
 		boolean devAreaFinished = true;
 		String devArea = squares[square].getDevArea();
