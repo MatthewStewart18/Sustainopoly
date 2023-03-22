@@ -118,7 +118,7 @@ public class Game {
 		if( startOfTurn == true) {
 			if(squares[focusedSquare].getName().equals("Chance")) {
 			
-				Chance.chanceTime(gameBoard, players, currentPlayer);
+				Chance.chanceTime(gameBoard, players[currentPlayer]);
 			
 			} else if(squares[focusedSquare].getName().equals("Donation Page")) {
 				int moneyMade = (int) (Math.random()*200+100);
