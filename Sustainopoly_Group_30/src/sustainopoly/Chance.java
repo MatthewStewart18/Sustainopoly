@@ -143,7 +143,7 @@ public class Chance {
 				gameBoard.setTime(player.getTime());
 			}
 			
-		}, "You had some fee time this week, you gained 20 hours");
+		}, "You had some free time this week, you gained 20 hours");
 	}
 
 }
