@@ -14,6 +14,14 @@ import java.io.IOException;
 import java.util.TimerTask;
 import java.util.Timer;
 
+/**
+ * The Board class controls the GUI of the game board
+ * It shows the board with the squares and the overlay containing the static elements(player info, menu etc) on a panel layered over the board
+ * Board give the interface for spending resources
+ * It detects when buttons on the screen are pressed and performs the desired task and calls methods in the Game class
+ * @author Magnus
+ *
+ */
 public class Board extends JLayeredPane implements MouseListener {
 
 	private Color background, foregroundColour, textColour, borderColour;
@@ -74,8 +82,20 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	private int[] playerPositions;
 	private BufferedImage[] playerIcons;
-	JProgressBar bar;
+	private JProgressBar bar;
 
+	/**
+	 * constructor for the board class
+	 * sets up the board using the squares, playerIcons and progress bar
+	 * sets the number of squares to be the closest multiple of 4 that is under or equal to the number of squares in the squares array
+	 * sets the number of players to the number of icons in the playerIcons and sets the positions to 0
+	 * adds a menu and overlay in panel over the board and add a background to a panel behind the board and sets the colours
+	 * @param squares - the squares on the board
+	 * @param display - controls what is being shown on the screen
+	 * @param playerIcons - array of buffered images containing the icons for all the players
+	 * @param gameController - the class that controls the game logic
+	 * @param bar - the bar that displays the game progress
+	 */
 	public Board(Square[] squares, Display display, BufferedImage[] playerIcons, Game gameController, JProgressBar bar) {
 		this.display = display;
 		this.squares = squares;
@@ -159,6 +179,11 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * resizes the components on screen relative to the screenWidth and screenHeight
+	 * @param screenWidth - the width of the window
+	 * @param screenHeight - the height of the window
+	 */
 	public void resize(int x, int y) {
 
 		
@@ -185,6 +210,9 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 	
+	/**
+	 * makes the board zoom out if it is not already zoomed out
+	 */
 	public void zoomOut() {
 		if (isZoomed) {
 			isZoomed = false;
@@ -195,6 +223,10 @@ public class Board extends JLayeredPane implements MouseListener {
 		}
 	}
 
+	/**
+	 * creates the menu's components with action listeners to perform actions when pressed and add them to the overlay panel which goes over the board
+	 * the menu contains Rules which shows the rules panel, displaySettings which shows the displaySettings panel and exit which exits the game
+	 */
 	private void setUpMenu() {
 		overlay.setLayout(new GridBagLayout());
 
@@ -250,6 +282,14 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.anchor = GridBagConstraints.CENTER;
 	}
 
+	/**
+	 * displays a box containing the message text, a yes button, and a no button
+	 * the yes and no buttons will run the code in the ActionListeners
+	 * the ActionListeners must call the removeConfirmationPanel method at the end
+	 * @param outputYes - what happens if the player presses yes
+	 * @param outputNo - what happens if the player presses no
+	 * @param messageText - the message to be displayed
+	 */
 	public void getConfirmation(ActionListener outputYes, ActionListener outputNo, String messageText) {
 
 		removeConfirmationPanel();
@@ -342,6 +382,9 @@ public class Board extends JLayeredPane implements MouseListener {
 		revalidate();
 	}
 
+	/**
+	 * if either the confirmation or message panels are displayed this will remove them
+	 */
 	public void removeConfirmationPanel() {
 		disableButtons(false);
 		messageDisplayed = false;
@@ -351,6 +394,14 @@ public class Board extends JLayeredPane implements MouseListener {
 		revalidate();
 	}
 	
+	/**
+	 * displays a box containing the message text and a continue button
+	 * the continue will run the code in the ActionListener
+	 * the ActionListener must call the removeConfirmationPanel method at the end
+	 * if outputContinue is null, pressing continue will only remove the message
+	 * @param outputContinue - what happens when the continue button is pressed
+	 * @param messageText - the message to be displayed
+	 */
 	public void displayMessage(ActionListener outputContinue, String messageText) {
 		removeConfirmationPanel();
 		disableButtons(true);
@@ -433,6 +484,11 @@ public class Board extends JLayeredPane implements MouseListener {
 		revalidate();
 	}
 
+	/**
+	 * sets buttonsDisabled to true to disable the buttons, or false to enable the buttons
+	 * disables the menu buttons
+	 * @param disable - whether the buttons should be disabled or enabled
+	 */
 	public void disableButtons(boolean disable) {
 
 		buttonsDisabled = disable;
@@ -1001,8 +1057,6 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
-
-	
 	public void changeColours(Color background, Color squares, Color text, Color border, boolean dark) {
 
 		
@@ -1472,7 +1526,6 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		}
 	}
-	
 	
 	public void zoomIn(int focusedSquare) {
 		Timer spin = new Timer();
