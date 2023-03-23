@@ -25,9 +25,9 @@ public class Display extends JFrame{
 	private Board GB;
 	private StartMenu gameStartMenu;
 	private DisplaySettings displaySettings;
-	Rules rulesPanel;
+	private Rules rulesPanel;
 	
-	CardLayout layout;
+	private CardLayout layout;
 	
 	private boolean fullScreen = false;
 	

@@ -258,7 +258,6 @@ public class Rules extends JPanel{
 		
 	}
 	
-	
 	public void changeColours(Color background, Color foreground, Color text, Color border, boolean dark) {
 		this.background = background;
 		this.foregroundColour = foreground;

@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.Scanner; 
 public class Square {
 	
-	protected int index;
-	protected final String name;
+	
+	private final String NAME;
 	private int maxMoney = 300;
 	private int maxTime = 0;
 	private int money = 0;
@@ -17,13 +17,13 @@ public class Square {
 	private Color header = Color.PINK;
 	private int taskLeader = -2;
 	
-	// website : Govanshare, 
+
 	
 	private int initialTimeInvest = 10;
 	private int initialMoneyInvest = 100;
 	
 	public Square(String name) {
-		this.name = name;
+		this.NAME = name;
 		Scanner fileReader = null;
 		String[] file = new String[9];
 		impact = new String[3];
@@ -78,15 +78,9 @@ public class Square {
 		
 	}
 	
-	public void doAction(Player currentPlayer) {
-	};
-	
-	public String toString() {
-		return name;
-	}
 	
 	public String getName() {
-		return name;
+		return NAME;
 	}
 	
 	public Color getColour() {
@@ -110,6 +104,7 @@ public class Square {
 	public int getMoney() {
 		return money;
 	}
+	
 	public void setMoney(int m) {
 		money+=m;
 	}
