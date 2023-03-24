@@ -23,7 +23,7 @@ public class CompletionBar {
 		return completionDone;
 	}
 
-	CompletionBar(int max) {
+	public CompletionBar(int max) {
 		this.max = max;
 		bar = new JProgressBar(0, max);
 		bar.setValue(0);
