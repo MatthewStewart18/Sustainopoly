@@ -10,6 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * DisplaySettings shows the players the display settings which are to change the colour and whether or not the display should be borderless fullscreen
+ * @author Magnus
+ *
+ */
 public class DisplaySettings extends JPanel implements ActionListener{
 	
 	private Color background, foregroundColour, textColour, borderColour;

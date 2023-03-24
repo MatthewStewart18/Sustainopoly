@@ -24,20 +24,27 @@ import java.util.Timer;
  */
 public class Board extends JLayeredPane implements MouseListener {
 
+	//the colours of the board and whether it is set to dark mode
 	private Color background, foregroundColour, textColour, borderColour;
+	private boolean darkMode = false;
 
+	//the buttons displayed on the board
 	private JButton squareButtons[], diceButton, endTurn;
 
+	//the images of the dice and the JLabel that displays them
 	private JLabel dice;
 	private ImageIcon[] dicePics;
 
+	//the GridBagConstraints used to position everything on the board
 	private GridBagConstraints squarePanelCon;
 	private GridBagConstraints infoCon;
 
 	private JMenu menu;
 
+	//the panels that store and position all the components to be shown
 	private JPanel squaresPanel, infoPanel, confirm, message , overlay, animationPanel, backgroundPanel, squareInfo;
 
+	//the values used to scale the board to fit in almost any sized window
 	private int squareWidth = 150;
 	private int squareHeight = 50;
 	private int numOfSquares = 20;
@@ -46,12 +53,15 @@ public class Board extends JLayeredPane implements MouseListener {
 	private int screenWidth;
 	private int screenHeight;
 
+	//keeps track of what rotation the board should be in
 	private int currentRotation = 0;
 
+	//the labels showing the current player name, money and time
 	private JLabel player, money, time;
 
 	private JLabel boardImage, title, backgroundJLabel;
 
+	//images of the top and bottom dice with each value from 1 to 6
 	private BufferedImage[] topDice;
 	private BufferedImage[] botDice;
 	private BufferedImage backgroundDice;
@@ -64,8 +74,8 @@ public class Board extends JLayeredPane implements MouseListener {
 	private Display display;
 	private Game gameController;
 	
-	private boolean buttonsDisabled = false;
-
+	
+	//stores the actual rotation of the board in degrees
 	private double rotation = 0;
 
 	private BufferedImage fullBoard, backgroundPict;
@@ -73,13 +83,14 @@ public class Board extends JLayeredPane implements MouseListener {
 	private BufferedImage[] titles;
 
 	
-
+	//the booleans ensure events don't overlap
+	private boolean buttonsDisabled = false;
 	private boolean isZoomed = false;
 	private boolean finishedAnimation = false;
 	private boolean playerCanMove;
-	private boolean darkMode = false;
 	private boolean messageDisplayed = false;
 
+	//the player positions and their icons
 	private int[] playerPositions;
 	private BufferedImage[] playerIcons;
 	private JProgressBar bar;
@@ -181,6 +192,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	/**
 	 * resizes the components on screen relative to the screenWidth and screenHeight
+	 * if the board is zoomed in it makes it zoom out
 	 * @param screenWidth - the width of the window
 	 * @param screenHeight - the height of the window
 	 */
@@ -196,6 +208,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		screenWidth = x;
 		screenHeight = y;
 
+		//finds the minimum between the width and the height and set the board width to be 90 percent of it
 		if (screenWidth >= screenHeight) {
 			boardWidth = screenHeight - screenHeight / 10;
 		} else {
@@ -204,6 +217,7 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		squareWidth = boardWidth / numOfSquares * 3;
 		squareHeight = boardWidth / numOfSquares;
+		//call change colour to make everything reset itself to fit the new screen size
 		changeColours(background, foregroundColour, textColour, borderColour, darkMode);
 
 		zoomOut();
@@ -230,7 +244,10 @@ public class Board extends JLayeredPane implements MouseListener {
 	private void setUpMenu() {
 		overlay.setLayout(new GridBagLayout());
 
+		//creates the menu
 		menu = new JMenu("MENU");
+		
+		//creates the rules menu option and adds it to the menu
 		rules = new JMenuItem("Rules");
 		rules.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -241,6 +258,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		rules.setFont(new Font("Arial", Font.PLAIN, 40));
 		menu.add(rules);
 
+		//creates the display settings menu option and adds it to the menu
 		displaySettings = new JMenuItem("DisplaySettings");
 		displaySettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -250,6 +268,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		displaySettings.setFont(new Font("Arial", Font.PLAIN, 40));
 		menu.add(displaySettings);
 
+		//creates the exit menu option and adds it to the menu
 		exit = new JMenuItem("Exit");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -275,6 +294,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		;
 		menuBar.setOpaque(false);
 
+		//adds the menu bar to the top right corner of the screen
 		squarePanelCon.anchor = GridBagConstraints.NORTHEAST;
 		squarePanelCon.gridx = 1;
 		squarePanelCon.gridy = 0;
@@ -406,6 +426,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		removeConfirmationPanel();
 		disableButtons(true);
 		messageDisplayed = true;
+		
 		message = new JPanel() {
 			public void paint(Graphics g) {
 		
@@ -425,9 +446,11 @@ public class Board extends JLayeredPane implements MouseListener {
 		}};
 		message.setOpaque(false);
 		
+		//use spring layout manager to position the components
 		SpringLayout sprLayout = new SpringLayout();
 		message.setLayout(sprLayout);
 
+		//create the text pane which holds the message
 		JTextPane text = new JTextPane();
 		SimpleAttributeSet centre = new SimpleAttributeSet();
 		StyleConstants.setAlignment(centre, StyleConstants.ALIGN_CENTER);
@@ -440,8 +463,9 @@ public class Board extends JLayeredPane implements MouseListener {
 		text.setText( messageText);
 		
 		
-
+		//create the continue button
 		JButton ok = new JButton("Continue");
+		//if the action listener is null then use a default action listener that only removes the message panel when pressed
 		if (outputContinue == null) {
 			ok.addActionListener(new ActionListener() {
 
@@ -466,6 +490,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		message.add(text);
 		message.add(ok);
 		
+		//sets the position of the components relative to each other and the sides of the panel
 		sprLayout.putConstraint(SpringLayout.NORTH, text, screenWidth/100, SpringLayout.NORTH, message);
 		sprLayout.putConstraint(SpringLayout.WEST, text, screenWidth/100, SpringLayout.WEST, message);
 		sprLayout.putConstraint(SpringLayout.EAST, message, screenWidth/100, SpringLayout.EAST, text);
@@ -473,6 +498,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		sprLayout.putConstraint(SpringLayout.SOUTH, message, screenWidth/100, SpringLayout.SOUTH, ok);
 		sprLayout.putConstraint(SpringLayout.EAST, ok, -screenWidth/100, SpringLayout.EAST, text);
 		
+		//adds the message to the centre of the overlay panel
 		squarePanelCon.fill = GridBagConstraints.NONE;
 		squarePanelCon.anchor = GridBagConstraints.CENTER;
 		squarePanelCon.gridwidth = 5;
@@ -496,6 +522,9 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * sets up the JPanel that shows the squares by adding JButtons for all the squares to it and adding the title in the centre
+	 */
 	private void setUpSquares() {
 
 		squaresPanel.addMouseListener(this);
@@ -510,6 +539,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.gridx = 1;
 		squarePanelCon.gridy = 1;
 
+		//adds all the buttons of the squares to the squares panel
 		for (int i = 0; i < numOfSquares / 4; i++) {
 
 			squareButtons[i] = new JButton() {
@@ -566,6 +596,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.gridwidth = numOfSquares / 4 + 3;
 		squarePanelCon.gridheight = 1;
 
+		//add spacers to the board to help position the squares
 		squaresPanel.add(new JLabel(), squarePanelCon);
 		squarePanelCon.gridy = numOfSquares / 4 + 2;
 		squaresPanel.add(new JLabel(), squarePanelCon);
@@ -583,6 +614,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		squarePanelCon.gridwidth = numOfSquares / 4 - 1;
 		squarePanelCon.gridheight = numOfSquares / 4 - 1;
 
+		//adds the title to the centre of the screen
 		title = new JLabel();
 		squaresPanel.add(title, squarePanelCon);
 		titles = new BufferedImage[2];
@@ -595,6 +627,11 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * sets up the dice by reading in all the images for the dice a JPanel for the dice rolling animation, 
+	 * adding a button to it that starts the dice rolling animation
+	 * sets the button to look like 2 dice
+	 */
 	private void setUpDice() {
 
 		dicePics = new ImageIcon[60];
@@ -643,6 +680,7 @@ public class Board extends JLayeredPane implements MouseListener {
 		diceButton.setBackground(Color.BLUE);
 		diceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//starts the dice rolling animation only if the dice returned are not null which means it is possible to roll the dice 
 				int[] finalDice = gameController.rollDice();
 				Timer rollDice = new Timer();
 				if(finalDice != null)rollDice.scheduleAtFixedRate(new DiceRoller(finalDice), 0, 40);
@@ -678,6 +716,11 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * set up the info panel which is a static panel that overlays the board
+	 * the player name, money and time is added to the info panel
+	 * the progress bar and its label is added to the info panel
+	 */
 	private void setUpInfo() {
 		infoPanel = new JPanel();
 		infoPanel.setLayout(new GridBagLayout());
@@ -771,12 +814,17 @@ public class Board extends JLayeredPane implements MouseListener {
 		infoCon.gridwidth = 5;
 		infoCon.gridx = 0;
 		infoCon.gridy = 1;
-		// infoPanel.add(spacer3, infoCon);
 
 		infoPanel.setOpaque(false);
 
 	}
 
+	/**
+	 * starts the animation of the selected player moving to the selected position
+	 * each movement will have a gap of 200 milliseconds
+	 * @param playerNum - the player being moved
+	 * @param pos - final position of the player
+	 */
 	public void movePlayer(int playerNum, int pos) {
 		
 		Timer move = new Timer();
@@ -785,18 +833,35 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * changes the player name displayed to a new name
+	 * @param playerName - the new player name 
+	 */
 	public void setPlayer(String playerName) {
 		player.setText("Player Name: " + playerName);
 	}
 
+	/**
+	 * changes the amount of money displayed to a new amount
+	 * @param money - the new amount of money
+	 */
 	public void setMoney(int money) {
 		this.money.setText("Money: " + money);
 	}
 
+	/**
+	 * sets the amount of time displayed to a new amount
+	 * @param time - the new amount of time
+	 */
 	public void setTime(int time) {
 		this.time.setText("Time: " + time + " Hours");
 	}
 
+	/**
+	 * Displays the information about the square, it:
+	 * creates a JPanel with a rounded border, sets the name of the square at the top and adds a JScrollPane containing a text description of the square
+	 * @param squareNum - the number of the square who's information is to be shown
+	 */
 	public void displaySquareInfo(int squareNum) {
 
 		infoCon.fill = GridBagConstraints.NONE;
@@ -877,6 +942,12 @@ public class Board extends JLayeredPane implements MouseListener {
 		squareInfo.add(scrollInfo, infoCon);
 	}
 
+	/**
+	 * displays the information about the square by calling thedisplaySquareInfo method then 
+	 * if the player can spend money on the square it adds a JSlider and a JSpinner underneath the information with max amounts being the amount of money it takes to complete the square take away the amount of money already spent  
+	 * if the player can spend time on the square it adds a JSlider and a JSpinner underneath the information with max amounts being the amount of time it takes to complete the square take away the amount of time already spent  
+	 * @param squareNum - the number of the square who's information is to be shown
+	 */
 	public void displaySquareInfoAndResources(int squareNum) {
 
 		displaySquareInfo(squareNum);
@@ -1057,6 +1128,15 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * sets the colour of the board to the colours provided and changes the components to the colours
+	 * redraws all the squares to make them the new colours
+	 * @param background - the background colour
+	 * @param squares - the main colour of the squares
+	 * @param text  - the colour of the text
+	 * @param border - the colour of the border
+	 * @param dark - whether the colours title should be light or dark
+	 */
 	public void changeColours(Color background, Color squares, Color text, Color border, boolean dark) {
 
 		
@@ -1127,6 +1207,11 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 	
+	/**
+	 * redraws the selected square to update it to the what it should look like currently
+	 * e.g. when a player moves the old and new squares have to be redrawn
+	 * @param squareNum - the selected square
+	 */
 	private void redrawSquare(int squareNum) {
 		if (squareNum > 0 && squareNum < numOfSquares / 4) {
 			squareButtons[squareNum].setIcon(new ImageIcon(
@@ -1162,11 +1247,15 @@ public class Board extends JLayeredPane implements MouseListener {
 		
 	}
 
+	/**
+	 * Creates a buffered image of the board which is the size of the screen multiplied by the zoom
+	 * creates the buffered image to be used when zooming in on the board so that the board doesn't become pixelated
+	 */
 	private void expandBoard() {
 
-		int screenWidth = (int) squaresPanel.getSize().getWidth();
-		int screenHeight = (int) squaresPanel.getSize().getHeight();
+	
 
+		//creates scaled up iages if all the squares
 		BufferedImage squareAnimationImages[] = new BufferedImage[numOfSquares];
 
 		for (int i = 1; i < numOfSquares / 4; i++) {
@@ -1195,12 +1284,14 @@ public class Board extends JLayeredPane implements MouseListener {
 		squareAnimationImages[numOfSquares / 4 * 3] = createSquareImage(numOfSquares / 4 * 3,
 				(squareWidth + squareHeight) * zoom, 0, 4, (int) (squareWidth / 6.25 * zoom));
 
+		//creates the bufferdImage 
 		Graphics2D sqImGraphics = null;
 		fullBoard = new BufferedImage(screenWidth * zoom, screenHeight * zoom, BufferedImage.TYPE_INT_ARGB);
 		sqImGraphics = fullBoard.createGraphics();
 		int offsetx = (screenWidth - boardWidth) / 2 * zoom;
 		int offsety = (screenHeight - boardWidth) / 2 * zoom;
 
+		//draws all the squares onto the buffered image
 		sqImGraphics.drawImage(squareAnimationImages[0], null, offsetx, offsety);
 		offsetx += (squareWidth + squareHeight) * zoom;
 		for (int i = 1; i < numOfSquares / 4; i++) {
@@ -1226,6 +1317,7 @@ public class Board extends JLayeredPane implements MouseListener {
 			sqImGraphics.drawImage(squareAnimationImages[i], null, offsetx, offsety);
 		}
 		offsetx += (squareWidth + squareHeight) * zoom;
+		//draws the title in the centre of the buffered image
 		int picWidth = (numOfSquares / 4 - 1) * squareWidth * zoom;
 		if (!darkMode) {
 			sqImGraphics.drawImage(titles[0].getScaledInstance(picWidth, picWidth, Image.SCALE_FAST), offsetx, offsety,
@@ -1235,6 +1327,7 @@ public class Board extends JLayeredPane implements MouseListener {
 					null);
 		}
 
+		//add an new JLabel to the animation panel to be used to display the animation of the board zooming in
 		boardImage = new JLabel();
 		boardImage.setOpaque(true);
 		squarePanelCon.gridwidth = 3;
@@ -1252,11 +1345,23 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * createAnimation is a private class which runs the code to create the frames of the zoom animation in an new thread to reduce the performance impact on the game
+	 * the animation is made at the same time as the board spins so being on another tread means it wont cause the spin animation to be interrupted
+	 * @author Magnus
+	 *
+	 */
 	private class createAnimation implements Runnable {
 
 		private int rotation;
 		private int squarePos;
 
+		/**
+		 * constructor for createAnimation sets the rotation the board will be
+		 * works out how far across the square is from -15 to 15 so it will know how far left or right it should move when zooming in
+		 * @param rotation - the rotation that the board will be
+		 * @param squarePos - the position of the square along its row
+		 */
 		public createAnimation(int rotation, int squarePos) {
 			this.rotation = rotation;
 			this.squarePos = (squarePos - 3) * 6 + 3;
@@ -1267,6 +1372,13 @@ public class Board extends JLayeredPane implements MouseListener {
 				this.squarePos++;
 		}
 
+		/**
+		 * the code to create the frames of the zoom animation by saving cropped images of the scaled up board created by expandBoard
+		 * it works out how wide the image should be and how far in from the left and how far down from the top it should be
+		 * saves the cropped image to an array and repeat the previous steps but creating a smaller image
+		 * 
+		 *  
+		 */
 		@Override
 		public void run() {
 			finishedAnimation = false;
@@ -1307,18 +1419,36 @@ public class Board extends JLayeredPane implements MouseListener {
 		}
 
 	}
-	
+
+	/**
+	 * private class that animates the player moving
+	 *it extends TimerTask so a Timer can run the code repeatedly at a fixed rate
+	 * @author Magnus
+	 *
+	 */
 	private class playerMover extends TimerTask{
 
 		int position;
 		int end;
 		int playerNum;
+		/**
+		 * constructor for PlayerMover
+		 * sets the start position of the player, the end position and the player that will move 
+		 * @param start - the start position
+		 * @param end - the end position
+		 * @param playerNum - the player to be moved
+		 */
 		public playerMover(int start, int end, int playerNum) {
 			position = start;
 			this.end = end;
 			this.playerNum = playerNum;
 		}
 		
+		/**
+		 * moves the position of the player 1 forward until the player reaches the end position
+		 * every time the player is moved forward the squares of the old and new position are redrawn
+		 * if the player passes the new week square the animation pauses and tells the player that they have passed a new week and then starts the animation again
+		 */
 		@Override
 		public void run() {
 			if(playerCanMove ) {
@@ -1350,8 +1480,19 @@ public class Board extends JLayeredPane implements MouseListener {
 		
 	}
 
+	/**
+	 * private class that animate the dice
+	 * it extends TimerTask so a Timer can run the code repeatedly at a fixed rate
+	 * @author Magnus
+	 *
+	 */
 	private class DiceRoller extends TimerTask {
 
+		/**
+		 * constructor for DiceRoller which removes the dice currently on the screen
+		 * then creates the final image of the animation which will be the 2 dice passed to it
+		 * @param finalDice - the values the dice land on
+		 */
 		public DiceRoller(int[] finalDice) {
 			super();
 
@@ -1382,6 +1523,10 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		private int dieNum = 0;
 
+		/**
+		 * changes the frame of animation of the dice rolling to the next one until it reaches the last frame then sets removes the dice animation and adds the image of the dice to the 
+		 * dice button then  ends itself
+		 */
 		@Override
 		public void run() {
 
@@ -1409,11 +1554,21 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * private class that animate the board spinning to a selected orientation
+	 * it extends TimerTask so a Timer can run the code repeatedly at a fixed rate
+	 * @author Magnus
+	 *
+	 */
 	private class BoardSpinner extends TimerTask {
 
 		int loopNum = 0;
 		int numOfRotations;
 
+		/**
+		 * gets the final orientation the board has to be and works out the fastest way to spin to that orientation
+		 * @param edge
+		 */
 		public BoardSpinner(int edge) {
 
 			numOfRotations = edge - currentRotation;
@@ -1428,6 +1583,10 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		}
 
+		/**
+		 * adds or takes away from the rotation of the board by 3 * the number of rotations then repaints the board where it will be at the new rotation
+		 * it repeats 30 times then starts the animation to zoom in to a square then ends itself
+		 */
 		@Override
 		public void run() {
 
@@ -1455,11 +1614,21 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * private class that animate the board zooming to a selected square
+	 * it extends TimerTask so a Timer can run the code repeatedly at a fixed rate
+	 * @author Magnus
+	 *
+	 */
 	private class BoardZoom extends TimerTask {
 
 		private int loopNum = 0;
 		private boolean zoomIn = true;
 
+		/**
+		 * sets whether the board zooms in or out
+		 * @param zoomIn - if the board is zooming in
+		 */
 		public BoardZoom(boolean zoomIn) {
 
 			this.zoomIn = zoomIn;
@@ -1467,6 +1636,12 @@ public class Board extends JLayeredPane implements MouseListener {
 
 		}
 
+		/**
+		 * changes the frame of the animation to the next image
+		 * if the board is zooming in it goes from the start of the animation to the end
+		 * if the board is zooming out it starts at the end of the animation and goes to the start in reverse order
+		 * once it is at the end if it is zooming in it shows the square info bit if it is zooming out then it removes the animation and shows the original board
+		 */
 		@Override
 		public void run() {
 
@@ -1527,6 +1702,12 @@ public class Board extends JLayeredPane implements MouseListener {
 		}
 	}
 	
+	/**
+	 * works out from the number of the focused square which orientation the screen should turn to and which position the square is in its row
+	 * it then starts the board spinning animation to spin to the correct orientation at the same time as the creates the frames of the animation of the board spinning
+	 * finally it creates the square info panel
+	 * @param focusedSquare - the square to be zoomed in on
+	 */
 	public void zoomIn(int focusedSquare) {
 		Timer spin = new Timer();
 
@@ -1582,8 +1763,16 @@ public class Board extends JLayeredPane implements MouseListener {
 		
 	}
 
+	/**
+	 * the private class SquarePicker implements ActionListener so that the actionPerformed method will be run whenever a square is clicked on
+	 * @author Magnus
+	 *
+	 */
 	private class SquarePicker implements ActionListener {
 
+		/**
+		 * if the buttons are not disabled or a message is being shown then the method gets the button that has been pressed, works out which square it belongs to then zooms in on that square
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -1615,6 +1804,17 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * draws the image of the square to a buffered image using Graphics2D and returns the buffered image
+	 * first create the buffered image and set its rotation then add the main colour, task area colour and border
+	 * if there is a player on that square their icon is drawn on top then the name of the square is drawn on the square
+	 * @param squareNum - the square being drawn
+	 * @param width - the width the square should be
+	 * @param colourHeight - the height the task area indicator should be
+	 * @param edge - the orientation the square should be in
+	 * @param fontsize - the size of the font for the name
+	 * @return - the image  of the square drawn
+	 */
 	private BufferedImage createSquareImage(int squareNum, int width, int colourHeight, int edge, int fontsize) {
 
 		Font font = new Font("Arial", Font.BOLD, fontsize);
@@ -1749,6 +1949,10 @@ public class Board extends JLayeredPane implements MouseListener {
 
 	}
 
+	/**
+	 * detects when the mouse is pressed
+	 * if the board is zoomed in, buttons are not disabled and a message is not displayed it checks the position of the mouse and if it is not over the info panel then it causes the board to zoom out
+	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (isZoomed && !buttonsDisabled && !messageDisplayed) {

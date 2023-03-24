@@ -12,6 +12,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * the EndScreen shows either the win or lose screen after the game ends
+ * it shows the future of the website and how much each person contributed
+ * @author Magnus
+ *
+ */
 public class EndScreen extends JPanel{
 	
 	private Color background, foregroundColour, textColour, borderColour;
