@@ -102,6 +102,17 @@ public class Player {
 
 		board.movePlayer(this.PLAYER_ID, position);
 	}
+	
+	/**
+	 * method to calculate where to move player and to call move
+	 * 
+	 * @param toPosition
+	 * @param board
+	 */
+	public void moveTo(int toPosition, Board board) {
+		move((20 - position + toPosition) % 20, board);
+	}
+
 
 	/**
 	 * method to invest
