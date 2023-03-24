@@ -10,7 +10,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
+/**
+ * Game controls the logic of the game
+ * @author Magnus
+ *
+ */
 public class Game {
 	
 	private Board gameBoard;
@@ -30,7 +34,7 @@ public class Game {
 	 * creates the game board with the squares, display, player icons and the progress bar
 	 * Finally initialise the player classes using the names from the players ArrayList then starts the game
 	 * @param players - the name icon and colour of each player
-	 * @param dis - the display class which controls what is being shown
+	 * @param dis - the display class which controls what is being shown  
 	 */
 	public Game(ArrayList<String[]> players, Display dis) {
 		this.display = dis;
@@ -108,11 +112,20 @@ public class Game {
 		
 	}
 	
+	/**
+	 * returns the Board associated with this Game
+	 * @return - the game board
+	 */
 	public Board getGameBoard() {
 		return gameBoard;
 	}
 	
 	
+	/**
+	 * determines what information should be shown about the focused square if it is just the information or is it also the interface for submitting resources
+	 * if it is the start of the turn it will also check if there is a special function corresponding the square that should take place
+	 * @param focusedSquare - the square to be shown
+	 */
 	public void displaySquareInfo(int focusedSquare) {
 		
 		if( startOfTurn == true) {
@@ -180,6 +193,14 @@ public class Game {
 		
 	}
 	
+	/**
+	 * asks the user of they want to be the task leader for this square
+	 * repeats through recursion until a new task leader is found or there are no more players
+	 * @param player - the player to be asked
+	 * @param playersLeft - the number of players left to ask
+	 * @param squareNum - the square it is finding the task leader for
+	 * @param message - the message it uses to ask for the player to be the task leader
+	 */
 	private void makeNewTaskLeader(int player, int playersLeft, int squareNum, String message) {
 		
 		if(playersLeft == 0) return;
@@ -227,6 +248,11 @@ public class Game {
 
 	}
 	
+	/**
+	 * if the turn cannot end then it will get 2 random integers from 1 to 6, get the player to move the sum of the numbers and return the numbers
+	 * if the turn can end meaning that the dice have already been rolled this turn then it only returns null
+	 * @return - the dice values
+	 */
 	public int[] rollDice() {
 		if(!canEndTurn) {
 			int[] dice = {(int) (Math.random()*6+1), (int) (Math.random()*6+1)};
@@ -245,6 +271,9 @@ public class Game {
 		
 	}
 	
+	/**
+	 * sets can turn end to be false then set the new player's name, money and time
+	 */
 	private void startTurn() {
 		canEndTurn = false;
 		
@@ -253,6 +282,11 @@ public class Game {
 		gameBoard.setTime(players[currentPlayer].getTime());
 	}
 	
+	/**
+	 * if it can end the turn it checks if the game has been completed, if so it opens the win screen,
+	 * if it isn't finished then it checks if the player has less than 0 pounds and if so it opens the lose screen
+	 * if neither of those things are true then it sets the player to be the next player then it starts the next turn
+	 */
 	public void endTurn() {
 		if(canEndTurn) {
 			
@@ -273,6 +307,15 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * checks to see if the player has enough time and money then if the square is a Fundraiser square then the player's time is taken away but money is added
+	 * if it another square then the player loses the time and money which is then added to the square
+	 * it gives a message of how much you have spent and if you finished all the tasks in the task area the square belongs to then a message about that is shown
+	 * the time money the player spent on squares is recorded in the player's investments
+	 * @param time - the time being spent
+	 * @param money - the money being spent
+	 * @param square - the square the resources are being spent on
+	 */
 	public void spendResources(int time, int money, int square) {
 		if (players[currentPlayer].getTime() < time) {
 			gameBoard.displayMessage(null, "You do not have enough time remaining");
@@ -337,6 +380,10 @@ public class Game {
 		
 	}
 	
+	/**
+	 * returns the array of players
+	 * @return the array of players
+	 */
 	public Player[] getPlayers() {
 		return  players;
 	}

@@ -16,6 +16,7 @@ import sustainopoly.Player;
  */
 
 /**
+ * tests the Game class
  * @author Magnus
  *
  */
@@ -31,6 +32,7 @@ class GameTest {
 
 	/**
 	 * @throws java.lang.Exception
+	 * creates a new game with 3 players for each test 
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
@@ -46,6 +48,7 @@ class GameTest {
 
 	/**
 	 * Test method for {@link Game#Game(java.util.ArrayList, Display)}.
+	 * tests that all the players were added and their names are correct
 	 */
 	@Test
 	void testGame() {
@@ -57,6 +60,7 @@ class GameTest {
 
 	/**
 	 * Test method for {@link Game#getGameBoard()}.
+	 * tests that a board was created along side the Game
 	 */
 	@Test
 	void testGetGameBoard() {
@@ -83,6 +87,7 @@ class GameTest {
 	
 	/**
 	 * Test method for {@link Game#rollDice()}.
+	 * tests that the dice cannot be rolled twice in a row
 	 */
 	@Test
 	void testDiceOnlyRollOnce() {
@@ -92,6 +97,7 @@ class GameTest {
 
 	/**
 	 * Test method for {@link Game#endTurn()}.
+	 * tests if the dice can be rolled after the previous turn has been ended
 	 */
 	@Test
 	void testDiceCanRerollAfterEndTurn() {
@@ -105,6 +111,7 @@ class GameTest {
 
 	/**
 	 * Test method for {@link Game#spendResources(int, int, int)}.
+	 * tests if the player loses the right amount of resources when they are spent
 	 */
 	@Test
 	void testSpendResources() {
@@ -128,6 +135,9 @@ class GameTest {
 		assertEquals(players[0].getMoney(), initialMoney );
 	}
 	
+	/**
+	 * tests to see if the player gains money from spending time on Fundraiser
+	 */
 	@Test
 	void testGainMoneyFromFundraiser() {
 		Player[] players = game.getPlayers();
@@ -141,7 +151,9 @@ class GameTest {
 	}
 	
 
-	
+	/**
+	 * tests if the player is stopped if they try to spend more time than they have
+	 */
 	@Test
 	void testSpendTooMuchTime() {
 		Player[] players = game.getPlayers();
@@ -154,6 +166,9 @@ class GameTest {
 		assertEquals(players[0].getMoney(), initialMoney);
 	}
 	
+	/**
+	 * tests if the player is stopped if they try to spend more money than they have
+	 */
 	@Test
 	void testSpendToMuchMoney() {
 		Player[] players = game.getPlayers();
@@ -166,6 +181,9 @@ class GameTest {
 		assertEquals(players[0].getMoney(), initialMoney);
 	}
 	
+	/**
+	 * tests to see if the players moved by the sum on the dice
+	 */
 	@Test
 	void testPlayerMovesAfterDiceMove() {
 		int[] dice = game.rollDice();
@@ -176,6 +194,9 @@ class GameTest {
 		assertEquals(players[0].getPosition(), movement);
 	}
 	
+	/**
+	 * tests to see if the next player will move on their turn
+	 */
 	@Test
 	void testNextPlayerMovesAfterEndTurn() {
 		game.rollDice();

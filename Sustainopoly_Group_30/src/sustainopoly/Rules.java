@@ -11,6 +11,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Rules displays the rules to the players which they can look through by clicking next or back
+ * @author Magnus
+ *
+ */
 public class Rules extends JPanel{
 	
 	private Color background, foregroundColour, textColour, borderColour;

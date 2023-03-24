@@ -2,6 +2,11 @@ package sustainopoly;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Chance will perform 1 of 8 options randomly that will affect the player
+ * @author Magnus
+ *
+ */
 public class Chance {
 	
 	public static void chanceTime(Board gameBoard, Player player) {

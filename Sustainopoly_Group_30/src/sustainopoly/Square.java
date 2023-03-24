@@ -3,6 +3,13 @@ import java.awt.*;
 import java.io.File;  
 import java.io.FileNotFoundException; 
 import java.util.Scanner; 
+
+
+/**
+ * Square reads in the information about a square and saves it. it then stores how the players have interacted with it e.e. time and money spent on the square
+ * @author Magnus
+ *
+ */
 public class Square {
 	
 	
@@ -25,7 +32,7 @@ public class Square {
 	public Square(String name) {
 		this.NAME = name;
 		Scanner fileReader = null;
-		String[] file = new String[9];
+		String[] file = new String[9]; 
 		impact = new String[3];
 		try {
 			File squareFile = new File("squares//" + name + ".txt");
