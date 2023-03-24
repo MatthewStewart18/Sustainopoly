@@ -104,16 +104,6 @@ public class Player {
 	}
 
 	/**
-	 * method to calculate where to move player and to call move
-	 * 
-	 * @param toPosition
-	 * @param board
-	 */
-	public void moveTo(int toPosition, Board board) {
-		move((20 - position + toPosition) % 20, board);
-	}
-
-	/**
 	 * method to invest
 	 * 
 	 * @param investment
@@ -141,6 +131,10 @@ public class Player {
 
 	}
 
+	/**
+	 * returns player ID
+	 * @return
+	 */
 	public int getPlayerID() {
 		return PLAYER_ID;
 	}
