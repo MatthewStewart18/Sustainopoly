@@ -1,77 +1,121 @@
 package test;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import javax.swing.JProgressBar;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import sustainopoly.Player;
+import sustainopoly.Square;
+import sustainopoly.Board;
+import sustainopoly.Display;
 import sustainopoly.Game;
 import junit.framework.TestCase;
 
 public class PlayerTest extends TestCase {
 
+	Player player = new Player("Tester", 1);
+	
+	@BeforeEach
 	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Test
-	public void testPlayer() {
-		fail("Not yet implemented");
+		
 	}
 
 	@Test
 	public void testGetName() {
-		fail("Not yet implemented");
+		String expected =  "Tester";
+		String actual = player.getName();
+		assertEquals(actual,expected);
+		System.out.println("Test for getName() completed");
 	}
 
 	@Test
 	public void testGetPosition() {
-		fail("Not yet implemented");
+		int expected = 0;
+		int actual = player.getPosition();
+		assertEquals(actual,expected);
+		System.out.println("Test for getPosition() completed");
 	}
 
 	@Test
 	public void testGetMoney() {
-		fail("Not yet implemented");
+		int expected = 1500;
+		int actual = player.getMoney();
+		assertEquals(actual,expected);
+		System.out.println("Test for getMoney() completed");
 	}
 
 	@Test
 	public void testGetTime() {
-		fail("Not yet implemented");
+		int expected = 40;
+		int actual = player.getTime();
+		assertEquals(actual,expected);
+		System.out.println("Test for getTime() completed");
 	}
 
 	@Test
 	public void testAddMoney() {
-		fail("Not yet implemented");
+		int add = 50;
+		int previous = player.getMoney();
+		player.addMoney(add);
+		
+		boolean pass = false;
+		
+		if (player.getMoney() > previous) {
+			pass = true;
+		} else {
+			pass = false;
+		}
+		
+		assertTrue(pass);
 	}
 
 	@Test
 	public void testAddTime() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testPay() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMove() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testMoveTo() {
-		fail("Not yet implemented");
+		int add = 50;
+		int previous = player.getTime();
+		player.addTime(add);
+		
+		boolean pass = false;
+		
+		if (player.getTime() > previous) {
+			pass = true;
+		} else {
+			pass = false;
+		}
+		
+		assertTrue(pass);
 	}
 
 	@Test
 	public void testInvestIn() {
-		fail("Not yet implemented");
+		player.investIn(20,5,"Online_Advertisement");
+		
+		int initial = player.listInvestments().size();
+		
+		boolean pass = false;
+		
+		if(player.listInvestments().size() > initial) {
+			pass = false;
+		} else {
+			pass = true;
+		}
+		
+		assertTrue(pass);
 	}
-
-	@Test
-	public void testListInvestments() {
-		fail("Not yet implemented");
-	}
-
+	
 	@Test
 	public void testGetPlayerID() {
-		fail("Not yet implemented");
+		int expected = 1;
+		int actual = player.getPlayerID();
+		assertEquals(expected,actual);
 	}
 
 }
+
